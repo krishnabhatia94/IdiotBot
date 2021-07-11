@@ -236,9 +236,9 @@ client.once('ready', async () => {
 client.on('message', message =>{
     if(!message.content.startsWith(prefix) || message.author.bot || message.channel.type === 'dm') return;
     
-    if((message.content.includes("@everyone") || message.content.includes("@here")) && !message.member.permissions.has("MENTION_EVERYONE") || message.content.length >= 1950){
-        message.channel.send("Nice try there, that was hilarious!");
-    } else {
+    // if((message.content.includes("@everyone") || message.content.includes("@here")) && !message.member.permissions.has("MENTION_EVERYONE") || message.mentions.roles || message.content.length >= 1950){
+    //     message.channel.send("Nice try there, that was hilarious!");
+    // } else {
         const args = message.content.slice(prefix.length).split(/ +/);
         const cmd = args.shift().toLowerCase();
 
@@ -436,12 +436,12 @@ client.on('message', message =>{
                 )
             message.channel.send(helpMessage);
         }
-    }
+    // }
 });
 client.on('message', async message =>{
     if(!message.content.startsWith(prefix) || message.author.bot || message.channel.type === 'dm') return;
     
-    if((message.content.includes("@everyone") || message.content.includes("@here")) && !message.member.permissions.has("MENTION_EVERYONE") || message.content.length >= 1950){
+    if((message.content.includes("@everyone") || message.content.includes("@here")) && !message.member.permissions.has("MENTION_EVERYONE") || message.mentions.roles || message.content.length >= 1950){
         message.channel.send("Nice try there, that was hilarious!");
     } else {
         const args = message.content.slice(prefix.length).split(/ +/);
