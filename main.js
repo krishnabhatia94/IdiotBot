@@ -441,7 +441,7 @@ client.on('message', message =>{
 client.on('message', async message =>{
     if(!message.content.startsWith(prefix) || message.author.bot || message.channel.type === 'dm') return;
     
-    if((message.content.includes("@everyone") || message.content.includes("@here")) && !message.member.permissions.has("MENTION_EVERYONE") || message.mentions.roles || message.content.length >= 1950){
+    if((message.content.includes("@everyone") || message.content.includes("@here")) && !message.member.permissions.has("MENTION_EVERYONE") || message.mentions.roles.size > 0 || message.content.length >= 1950){
         message.channel.send("Nice try there, that was hilarious!");
     } else {
         const args = message.content.slice(prefix.length).split(/ +/);
@@ -770,9 +770,9 @@ client.on('message', async message =>{
                 const context = canvas.getContext('2d');
                 
                 let image;
-                if(!message.content[1].startsWith("<@") && message.attachments.size === 0){
+                if(!message.mentions.members.first() && message.attachments.size === 0){
                     image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
-                } else if(message.content[1].startsWith("<@") && message.attachments.size === 0) {
+                } else if(message.mentions.members.first() && message.attachments.size === 0) {
                     registeredText = message.content.split(" ").slice(2).join(" ");
                     image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
                 } else if(message.attachments.size > 0){
@@ -780,9 +780,9 @@ client.on('message', async message =>{
                     if(attatchmentMessage.endsWith(".png") || attatchmentMessage.endsWith(".jpg") || attatchmentMessage.endsWith(".gif")){
                         image = await Canvas.loadImage(message.attachments.first().url);
                     } else {
-                        if(!message.content[1].startsWith("<@") && message.attachments.size === 0){
+                        if(!message.mentions.members.first() && message.attachments.size === 0){
                             image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
-                        } else if(message.content[1].startsWith("<@") && message.attachments.size === 0) {
+                        } else if(message.mentions.members.first() && message.attachments.size === 0) {
                             registeredText = message.content.split(" ").slice(2).join(" ");
                             image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
                         }
