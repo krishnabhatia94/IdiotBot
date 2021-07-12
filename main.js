@@ -710,7 +710,7 @@ client.on('message', async message =>{
         if(cmd === "meme" || cmd === "image"){
             let registeredText = message.content.split(" ").slice(1).join(" ");
             if(registeredText.length > 0){
-                Canvas.registerFont('/Windows/Fonts/times.ttf', { family: 'Times New Roman'});
+                Canvas.registerFont('./times.ttf', { family: 'Times New Roman'});
                 const canvas = Canvas.createCanvas(700, 510);
                 const context = canvas.getContext('2d');
 
@@ -725,12 +725,12 @@ client.on('message', async message =>{
                     image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
                 } else if(message.attachments.size > 0){
                     let attatchmentMessage = message.attachments.first().url
-                    if(attatchmentMessage.endsWith(".png") || attatchmentMessage.endsWith(".jpg") || attatchmentMessage.endsWith(".gif")){
+                    if(attatchmentMessage.endsWith(".png") || attatchmentMessage.endsWith(".jpg") || attatchmentMessage.endsWith(".gif") || attatchmentMessage.endsWith(".webp")){
                         image = await Canvas.loadImage(message.attachments.first().url);
                     } else {
-                        if(!message.mentions.members.first() && message.attachments.size === 0){
+                        if(!message.mentions.members.first()){
                             image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
-                        } else if(message.mentions.members.first() && message.attachments.size === 0) {
+                        } else if(message.mentions.members.first()) {
                             registeredText = message.content.split(" ").slice(2).join(" ");
                             image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
                         }
@@ -777,12 +777,12 @@ client.on('message', async message =>{
                     image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
                 } else if(message.attachments.size > 0){
                     let attatchmentMessage = message.attachments.first().url
-                    if(attatchmentMessage.endsWith(".png") || attatchmentMessage.endsWith(".jpg") || attatchmentMessage.endsWith(".gif")){
+                    if(attatchmentMessage.endsWith(".png") || attatchmentMessage.endsWith(".jpg") || attatchmentMessage.endsWith(".gif") || attatchmentMessage.endsWith(".webp")){
                         image = await Canvas.loadImage(message.attachments.first().url);
                     } else {
-                        if(!message.mentions.members.first() && message.attachments.size === 0){
+                        if(!message.mentions.members.first()){
                             image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
-                        } else if(message.mentions.members.first() && message.attachments.size === 0) {
+                        } else if(message.mentions.members.first()) {
                             registeredText = message.content.split(" ").slice(2).join(" ");
                             image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
                         }
