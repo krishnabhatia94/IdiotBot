@@ -376,7 +376,7 @@ client.on('message', message =>{
                 } else {
                     lastPing = "userNotSpecified";
                 }
-                if(!lastMessage.author.bot && !lastMessage.content.includes("@everyone") && !lastMessage.content.includes("@here")){
+                if(!lastMessage.author.bot && !lastMessage.content.includes("@everyone") && !lastMessage.content.includes("@here") && lastMessage.mentions.roles.size === 0){
                     if(lastPing === "userNotSpecified"){
                         message.channel.send("> " + lastMessage.toString() + "\n<@" + lastMessage.author.id + ">");
                     } else {
@@ -384,7 +384,7 @@ client.on('message', message =>{
                     }
                 } else if(lastMessage.author.bot) {
                     message.channel.send("I won't quote a fellow bot, idiot.");
-                } else if(!lastMessage.content.includes("@everyone") || !lastMessage.content.includes("@here")){
+                } else if(!lastMessage.content.includes("@everyone") || !lastMessage.content.includes("@here") || lastMessage.mentions.roles.size > 0){
                     message.channel.send("Nice try there, that was hilarious!");
                 }
             })
@@ -393,11 +393,11 @@ client.on('message', message =>{
         if(cmd === 'whos' || cmd === 'who' || cmd === "who's" || cmd === 'whois' || cmd === "mama"){
             message.channel.messages.fetch({ limit: 2}).then(messages => {
                 let whosMessage = messages.last();
-                if(!whosMessage.author.bot && !whosMessage.toString().includes("@everyone") && !whosMessage.toString().includes("@here")){
+                if(!whosMessage.author.bot && !whosMessage.toString().includes("@everyone") && !whosMessage.toString().includes("@here") && whosMessage.mentions.roles.size === 0){
                     message.channel.send(whosMessage.toString() + " mama!");
                 } else if(whosMessage.author.bot) {
                     message.channel.send("Can't mama a bot, idiot.");
-                } else if(!whosMessage.content.includes("@everyone") || !whosMessage.content.includes("@here")){
+                } else if(!whosMessage.content.includes("@everyone") || !whosMessage.content.includes("@here") || whosMessage.mentions.roles.size > 0){
                     message.channel.send("Nice try there, that was hilarious!");
                 } else if(whosMessage.toString().length >= 1900){
                     message.channel.send("woah there i cant take that dadd-")
@@ -408,11 +408,11 @@ client.on('message', message =>{
         if(cmd === 'john' || cmd === 'jon' || cmd === "johnothan" || cmd === 'johnathan' || cmd === "haha" || cmd === 'jonathan' || cmd === 'jonothan'){
             message.channel.messages.fetch({ limit: 2}).then(messages => {
                 let johnMessage = messages.last();
-                if(!johnMessage.author.bot && !johnMessage.toString().includes("@everyone") && !johnMessage.toString().includes("@here")){
+                if(!johnMessage.author.bot && !johnMessage.toString().includes("@everyone") && !johnMessage.toString().includes("@here") && johnMessage.mentions.roles.size === 0){
                     message.channel.send("HAHA Jonathan, you are " + johnMessage.toString() + "!");
                 } else if(johnMessage.author.bot) {
                     message.channel.send("Can't Jonathan a bot, idiot.");
-                } else if(!johnMessage.content.includes("@everyone") || !johnMessage.content.includes("@here")){
+                } else if(!johnMessage.content.includes("@everyone") || !johnMessage.content.includes("@here") || johnMessage.mentions.roles.size > 0){
                     message.channel.send("Nice try there, that was hilarious!");
                 } else if(johnMessage.content.toString().length >= 1900){
                     message.channel.send("woah there i cant take that dadd-")
@@ -813,7 +813,7 @@ client.on('message', async message =>{
                 message.channel.send("'>meme2' is used to generate a meme! You can also optionally attatch an image to the message! You can include a | somewhere in there to include bottom text.\n\nExample: '>meme2 ohp | ohp' or, you can ping someone, '>meme2 @user ohp | ohp' like that!\n\nEnjoy the command!");
             }
         }
-        if(cmd === 'say'){
+        function sayCommand(){
             const whatSaid = message.content.split(" ").slice(1).join(" ");
             if(message.content == ">say"){
                 message.channel.send(">say is for repeating what you say to me back to you. Additionally, the message I send will be repeated in voice chat, if both of us are in the same one!")// If you react to one of my >say messages, I'll dm you the person who requested the command.");
@@ -851,6 +851,13 @@ client.on('message', async message =>{
                 // });
             }
         }
+        if(cmd === 'say'){
+            sayCommand();
+        }
+        if(cmd === 'saydelete'){
+            sayCommand();
+            message.delete();
+        }
         // if(selfBot.voice.channel){
         //     if(selfBot.voice.channel.members.size === 1){ 
         //         setInterval(function(){
@@ -867,4 +874,4 @@ client.on('message', async message =>{
     }
 });
 
-client.login('NzcxMTk1MzY2NjQ1MDM5MTE1.X5olpw.PxS58T8LOT7eAJZSRjOPSGUKd98');
+client.login('NzcxMTk1MzY2NjQ1MDM5MTE1.X5olpw.NLSg5aTOKVPosGCyWDIY9uIwD64');
