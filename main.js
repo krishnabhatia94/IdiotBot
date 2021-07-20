@@ -14,7 +14,7 @@ const prefix = '>';
 
 client.once('ready', () => {
     console.log('Idiot Bot is Online!');
-    client.user.setPresence({ activity: { name: "i am an image {>help}" }, status: 'online'})
+    client.user.setPresence({ activity: { name: "idiot bot trailer out now! https://www.youtube.com/watch?v=FZ0fpXJgd_8 {>help}" }, status: 'online'})
     .then(() => console.log)
     .catch(console.error);
 });
@@ -304,17 +304,17 @@ client.on('message', message =>{
             } else {
                 let numberMessage = parseInt(message.content.split(" ").slice(2).join(" "), 10)+1; //gets the message to react to from message, and converts it to a number
 
-                const emojiList = message.guild.emojis.cache.map(e=>e.toString()).join(" "); // list of all emotes in server           
+                const emojiList = message.guild.emojis.cache.map(e=>e.toString()).join(" "); // list of all emotes in server
                 let emoteCut = message.content.split(" ").slice(1).join(" ").replace(message.content.split(" ").slice(2).join(" "), ""); // gets the emote from the message
-                const rctEmote = message.guild.client.emojis.cache.find(emoji => emoji.name === emoteCut.trim()); // finding emote in server emote list
+                let rctEmote = client.emojis.cache.find(emoji => emoji.name === emoteCut.trim()); // finding emote in server emote list
 
                 if(numberMessage !== 'NaN' && numberMessage < 20){ // checks if its a number, and if it is less than 20 messages ago
                     message.channel.messages.fetch({ limit: numberMessage}).then(messages => { // finds which message to react to
                         let messageReact = messages.last();
-                        if(typeof(emojiList) != "undefined"){ // if emojiList var type is not undefined, react the emote!
+                        if(typeof(rctEmote) !== "undefined"){ // if emojiList var type is not undefined, react the emote!
                             messageReact.react(rctEmote);
                         } else { // if emote not recognized
-                            message.channel.send("That emote's not in any servers i'm in, moron. (try removing the :'s if there are any.)");
+                            message.channel.send("That emote's not in any servers I'm in, moron. (Try removing the :'s if there are any.)");
                         }
                     })
                 .catch(console.error);
@@ -438,6 +438,8 @@ client.on('message', message =>{
         }
     // }
 });
+// let currentlyPlaying = [];
+// let playQueue = [];
 client.on('message', async message =>{
     if(!message.content.startsWith(prefix) || message.author.bot || message.channel.type === 'dm') return;
     
@@ -447,11 +449,26 @@ client.on('message', async message =>{
         const args = message.content.slice(prefix.length).split(/ +/);
         const cmd = args.shift().toLowerCase();
         let selfBot = message.guild.members.cache.get("771195366645039115");
+
         function playSongFile(pathToFile){
+            // let isPlaying = false; // this stuff is for looping, or more specifically queue looping. 
+            // if(isPlaying){
+            //     playQueue.push(pathToFile);
+            // } else {
+                // currentlyPlaying.push(pathToFile);
+            // }
             if(message.member.voice.channel && selfBot.voice.channel){
                 if(message.member.voice.channel.id === selfBot.voice.channel.id){
                     message.member.voice.channel.join().then(connection =>{
                         const dispatcher = connection.play(pathToFile);
+                        // isPlaying = true;
+                        // dispatcher.on("finish", () =>{
+                        //     currentlyPlaying.splice(currentlyPlaying.length);
+                        //     currentlyPlaying.push(playQueue[0]);
+                        //     playQueue.splice(0, 1);
+                        //     dispatcher = connection.play(playQueue.length - 1);
+                        //     isPlaying = false;
+                        // });
                     });
                 }
             }
