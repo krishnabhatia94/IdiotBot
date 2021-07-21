@@ -376,7 +376,7 @@ client.on('message', message =>{
                 } else {
                     lastPing = "userNotSpecified";
                 }
-                if(!lastMessage.author.bot && !lastMessage.content.includes("@everyone") && !lastMessage.content.includes("@here") && lastMessage.mentions.roles.size === 0){
+                if(!lastMessage.author.bot && !lastMessage.content.includes("@everyone") && !lastMessage.content.includes("@here") && lastMessage.mentions.roles.size === 0 && lastMessage.content.length <= 1900){
                     if(lastPing === "userNotSpecified"){
                         message.channel.send("> " + lastMessage.toString() + "\n<@" + lastMessage.author.id + ">");
                     } else {
@@ -386,6 +386,8 @@ client.on('message', message =>{
                     message.channel.send("I won't quote a fellow bot, idiot.");
                 } else if(!lastMessage.content.includes("@everyone") || !lastMessage.content.includes("@here") || lastMessage.mentions.roles.size > 0){
                     message.channel.send("Nice try there, that was hilarious!");
+                } else if(lastMessage.content.length >= 1900){
+                    message.channel.send("You got too much text in the message. Take it down a notch you collosal baffoon!")
                 }
             })
             .catch(console.error);
@@ -393,14 +395,14 @@ client.on('message', message =>{
         if(cmd === 'whos' || cmd === 'who' || cmd === "who's" || cmd === 'whois' || cmd === "mama"){
             message.channel.messages.fetch({ limit: 2}).then(messages => {
                 let whosMessage = messages.last();
-                if(!whosMessage.author.bot && !whosMessage.toString().includes("@everyone") && !whosMessage.toString().includes("@here") && whosMessage.mentions.roles.size === 0){
+                if(!whosMessage.author.bot && !whosMessage.toString().includes("@everyone") && !whosMessage.toString().includes("@here") && whosMessage.mentions.roles.size === 0 && whosMessage.content.length <= 1900){
                     message.channel.send(whosMessage.toString() + " mama!");
                 } else if(whosMessage.author.bot) {
                     message.channel.send("Can't mama a bot, idiot.");
                 } else if(!whosMessage.content.includes("@everyone") || !whosMessage.content.includes("@here") || whosMessage.mentions.roles.size > 0){
                     message.channel.send("Nice try there, that was hilarious!");
-                } else if(whosMessage.toString().length >= 1900){
-                    message.channel.send("woah there i cant take that dadd-")
+                } else if(whosMessage.content.length >= 1900){
+                    message.channel.send("woah there i cant take that much text dadd-")
                 }
             })
             .catch(console.error);
@@ -408,14 +410,14 @@ client.on('message', message =>{
         if(cmd === 'john' || cmd === 'jon' || cmd === "johnothan" || cmd === 'johnathan' || cmd === "haha" || cmd === 'jonathan' || cmd === 'jonothan'){
             message.channel.messages.fetch({ limit: 2}).then(messages => {
                 let johnMessage = messages.last();
-                if(!johnMessage.author.bot && !johnMessage.toString().includes("@everyone") && !johnMessage.toString().includes("@here") && johnMessage.mentions.roles.size === 0){
+                if(!johnMessage.author.bot && !johnMessage.toString().includes("@everyone") && !johnMessage.toString().includes("@here") && johnMessage.mentions.roles.size === 0 && johnMessage.content.length <= 1900){
                     message.channel.send("HAHA Jonathan, you are " + johnMessage.toString() + "!");
                 } else if(johnMessage.author.bot) {
                     message.channel.send("Can't Jonathan a bot, idiot.");
                 } else if(!johnMessage.content.includes("@everyone") || !johnMessage.content.includes("@here") || johnMessage.mentions.roles.size > 0){
                     message.channel.send("Nice try there, that was hilarious!");
-                } else if(johnMessage.content.toString().length >= 1900){
-                    message.channel.send("woah there i cant take that dadd-")
+                } else if(johnMessage.content.length >= 1900){
+                    message.channel.send("Mucho texto!");
                 }
             })
             .catch(console.error);
