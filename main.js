@@ -2,13 +2,15 @@ const Discord = require('discord.js');
 const fs = require('ffmpeg');
 const { get } = require('http');
 const path = require('path');
+const ffmpeg = require('ffmpeg');
 const ytdl = require('discord-ytdl-core');
+const mjpeg = require('mp4-mjpeg');
 const Canvas = require('canvas');
 const tts = require('say');
 const fileService = require('fs');
 require('discord-reply');
 const { UV_FS_O_FILEMAP } = require('constants');
-const { title } = require('process');
+const { exec } = require('child_process');
 const myIntents = new Discord.Intents(Discord.Intents.ALL);
 const client = new Discord.Client({ ws: { intents: myIntents } });
 const prefix = '>';
@@ -282,9 +284,6 @@ client.on('message', message =>{
         if(cmd === 'ok' || cmd === 'okay'){
             message.channel.send("ok");
         }
-        if(cmd === 'version' || cmd === 'ver' || cmd === 'vers'){
-            message.channel.send("Idiot Bot is on version **" + require('./package.json').version + "**!");
-        }
         if(cmd === 'random' || cmd === 'randomnum' || cmd === 'randomnumber'){
             let numberSaidOne = parseInt(message.content.split(" ").slice(1).join(" "));
             let numberSaidTwo = parseInt(message.content.split(" ").slice(2).join(" "));
@@ -459,9 +458,10 @@ client.on('message', message =>{
                 .setTitle('Prefix: >')
                 .addFields(
                     { name: 'Basic Commands:', value: '>idiot/\n>danny/\n>fat/\n>cheese/\n>swear/\n>>\n>ok\n>version\n>invite\n\n\n*a / behind a command means it is also compatible as a slash command.', inline: true},
-                    { name: 'Miscellaneous Commands:', value: '>say\n>react\n>whos\n>quote\n>delete\n>membercount\n>random\n>math\n>ping\n>meme\n>meme2\n>pfp\n>rps', inline: true},
+                    { name: 'Miscellaneous Commands:', value: '>say/\n>react\n>whos\n>quote\n>delete\n>membercount\n>servercount\n>random\n>math\n>ping\n>meme\n>meme2\n>pfp\n>rps', inline: true},
                     { name: 'Voice Commands:', value: '>join\n>leave\n>voicemembercount\n>rickroll\n>fart/\n>boom\n>avocado\n>chip/\n>say', inline: true},
-                    { name: 'Support Server:', value: '<https://discord.gg/4kwx3ezpNW>'},
+                    { name: 'Support Server:', value: '<https://discord.gg/4kwx3ezpNW>', inline: true},
+                    { name: 'Version:', value: 'Idiot Bot is on **v. ' + require('./package.json').version + "**.", inline: true},
                     { name: 'Creator:', value: 'Idiot Bot was created by 94 Central, <https://www.youtube.com/94Central>.'}
                 )
             message.channel.send(helpMessage);
@@ -481,24 +481,10 @@ client.on('message', async message =>{
         let selfBot = message.guild.members.cache.get("771195366645039115");
 
         function playSongFile(pathToFile){
-            // let isPlaying = false; // this stuff is for looping, or more specifically queue looping. 
-            // if(isPlaying){
-            //     playQueue.push(pathToFile);
-            // } else {
-                // currentlyPlaying.push(pathToFile);
-            // }
             if(message.member.voice.channel && selfBot.voice.channel){
                 if(message.member.voice.channel.id === selfBot.voice.channel.id){
                     message.member.voice.channel.join().then(connection =>{
                         const dispatcher = connection.play(pathToFile);
-                        // isPlaying = true;
-                        // dispatcher.on("finish", () =>{
-                        //     currentlyPlaying.splice(currentlyPlaying.length);
-                        //     currentlyPlaying.push(playQueue[0]);
-                        //     playQueue.splice(0, 1);
-                        //     dispatcher = connection.play(playQueue.length - 1);
-                        //     isPlaying = false;
-                        // });
                     });
                 }
             }
@@ -909,11 +895,25 @@ client.on('message', async message =>{
             sayCommand();
             message.delete();
         }
-        // if(selfBot.voice.channel){
-        //     if(selfBot.voice.channel.members.size === 1){ 
-        //         setInterval(function(){
-        //             message.guild.me.voice.channel.leave(); //if no one is in the voice chat, leave.
-        //         }, 300000); //5 minutes
+        // if(cmd === "video"){
+        //     const videoLink = message.content.split(" ").slice(1).join(" ");
+        //     if(message.content == ">video" && message.attachments.first().size == 0){
+        //         message.channel.send(">video is used to create videos! Attach an image, and put a link to a youtube video in the command! Usage: '>video {link}' with an image attached to your message.");
+        //     //} else if(!ytdl.validateURL(videoLink)){ //checks if it is a video
+        //     //    message.channel.send("No valid youtube video found under that link!");
+        //     } else if(message.attachments.first().size == 0 && !message.content == ">video") {
+        //         message.channel.send("Gotta attach an image to your command!");
+        //     } else {
+        //         const timeStamp = new Date().getTime();
+        //         mjpeg({ __filename: `.cache/image${timeStamp}.mp4`}).then((recorder) => {recorder.appendImageDataUrl(imageAsDataURL).then(async () => {
+        //             await exec(`ffmpeg -i 94drown.mp4 -i smap.mp4 ./cache/${timeStamp}.mp4`);
+        //             setTimeout(() => {
+        //                 const videoImage = new Discord.MessageAttachment(`./cache/${timeStamp}.mp4`);
+        //                 const videoTwo = new Discord.MessageAttachment(`.cache/image${timeStamp}.mp4`);
+        //                 message.channel.send(videoTwo);
+        //             }, 1000);
+        //         })});
+                
         //     }
         // }
         if(cmd === 'poopy'){
