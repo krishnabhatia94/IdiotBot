@@ -3,14 +3,14 @@ const fs = require('ffmpeg');
 const { get } = require('http');
 const path = require('path');
 const ffmpeg = require('ffmpeg');
-const ytdl = require('discord-ytdl-core');
-const mjpeg = require('mp4-mjpeg');
+const ytdl = require('ytdl-core');
 const Canvas = require('canvas');
 const tts = require('say');
 const fileService = require('fs');
 require('discord-reply');
 const { UV_FS_O_FILEMAP } = require('constants');
 const { exec } = require('child_process');
+const { format } = require('path');
 const myIntents = new Discord.Intents(Discord.Intents.ALL);
 const client = new Discord.Client({ ws: { intents: myIntents } });
 const prefix = '>';
@@ -895,25 +895,36 @@ client.on('message', async message =>{
             sayCommand();
             message.delete();
         }
+        if(cmd === "play"){
+            const videoLink = message.content.split(" ").slice(1).join(" ");
+            if(message.content === ">play"){
+                message.channel.send(">play is used to play youtube videos in voice channels!");
+            }
+            if(!ytdl.validateURL(videoLink)){
+                message.channel.send("Please provide a valid youtube link!");
+            } else if(!message.member.voice.channel){
+                message.channel.send("Gotta join a VC! (and have me in it)");
+            } else {
+                message.channel.send("Playing your song!");
+                playSongFile(ytdl(videoLink));
+            }
+        }
         // if(cmd === "video"){
         //     const videoLink = message.content.split(" ").slice(1).join(" ");
-        //     if(message.content == ">video" && message.attachments.first().size == 0){
+        //     if(message.content == ">video"){// && message.attachments.size == 0){
         //         message.channel.send(">video is used to create videos! Attach an image, and put a link to a youtube video in the command! Usage: '>video {link}' with an image attached to your message.");
-        //     //} else if(!ytdl.validateURL(videoLink)){ //checks if it is a video
-        //     //    message.channel.send("No valid youtube video found under that link!");
-        //     } else if(message.attachments.first().size == 0 && !message.content == ">video") {
-        //         message.channel.send("Gotta attach an image to your command!");
+        //     } else if(!ytdl.validateURL(videoLink)){ //checks if it is a video
+        //        message.channel.send("No valid youtube video found under that link, or, the requested video was too long!");
+        //     // } else if(message.attachments.size == 0 && !message.content == ">video") {
+        //     //     message.channel.send("Gotta attach an image to your command!");
         //     } else {
         //         const timeStamp = new Date().getTime();
-        //         mjpeg({ __filename: `.cache/image${timeStamp}.mp4`}).then((recorder) => {recorder.appendImageDataUrl(imageAsDataURL).then(async () => {
-        //             await exec(`ffmpeg -i 94drown.mp4 -i smap.mp4 ./cache/${timeStamp}.mp4`);
-        //             setTimeout(() => {
-        //                 const videoImage = new Discord.MessageAttachment(`./cache/${timeStamp}.mp4`);
-        //                 const videoTwo = new Discord.MessageAttachment(`.cache/image${timeStamp}.mp4`);
-        //                 message.channel.send(videoTwo);
-        //             }, 1000);
-        //         })});
-                
+        //         ytdl(videoLink).pipe(fileService.createWriteStream(`./cache/youtubeDownloaded${timeStamp}.mp4`));
+        //         setTimeout(() => {exec(`ffmpeg -i youtubeDownloaded${timeStamp}.mp4 -i smap.mp4 .cache/${timeStamp}.mp4`)}, 3000);
+        //         setTimeout(() => {
+        //             const videoImage = new Discord.MessageAttachment(`./cache/${timeStamp}.mp4`);
+        //             message.channel.send(videoImage);
+        //         }, 6000);
         //     }
         // }
         if(cmd === 'poopy'){
