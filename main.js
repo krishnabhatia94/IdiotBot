@@ -920,11 +920,11 @@ client.on('message', async message =>{
         //     } else {
         //         const timeStamp = new Date().getTime();
         //         ytdl(videoLink).pipe(fileService.createWriteStream(`./cache/youtubeDownloaded${timeStamp}.mp4`));
-        //         setTimeout(() => {exec(`ffmpeg -i youtubeDownloaded${timeStamp}.mp4 -i smap.mp4 .cache/${timeStamp}.mp4`)}, 3000);
+        //         setTimeout(() => {exec(`ffmpeg -i ./cache/youtubeDownloaded${timeStamp}.mp4 -i smap.mp4 cache/${timeStamp}.mp4`)}, 3000);
         //         setTimeout(() => {
         //             const videoImage = new Discord.MessageAttachment(`./cache/${timeStamp}.mp4`);
         //             message.channel.send(videoImage);
-        //         }, 6000);
+        //         }, 8000);
         //     }
         // }
         if(cmd === 'poopy'){
