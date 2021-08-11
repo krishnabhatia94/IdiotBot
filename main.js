@@ -17,7 +17,7 @@ const prefix = '>';
 
 client.once('ready', () => {
     console.log('Idiot Bot is Online!');
-    client.user.setPresence({ activity: { name: "idiot bot trailer out now! https://www.youtube.com/watch?v=FZ0fpXJgd_8 {>help}" }, status: 'online'})
+    client.user.setPresence({ activity: { name: "idiot bot trailer is still out now! https://www.youtube.com/watch?v=FZ0fpXJgd_8 {>help}" }, status: 'online'})
     .then(() => console.log)
     .catch(console.error);
 });
