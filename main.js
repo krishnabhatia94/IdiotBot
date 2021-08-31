@@ -895,20 +895,20 @@ client.on('message', async message =>{
             sayCommand();
             message.delete();
         }
-        if(cmd === "play"){
-            const videoLink = message.content.split(" ").slice(1).join(" ");
-            if(message.content === ">play"){
-                message.channel.send(">play is used to play youtube videos in voice channels!");
-            }
-            if(!ytdl.validateURL(videoLink)){
-                message.channel.send("Please provide a valid youtube link!");
-            } else if(!message.member.voice.channel){
-                message.channel.send("Gotta join a VC! (and have me in it)");
-            } else {
-                message.channel.send("Playing your song!");
-                playSongFile(ytdl(videoLink));
-            }
-        }
+        // if(cmd === "play"){
+        //     const videoLink = message.content.split(" ").slice(1).join(" ");
+        //     if(message.content === ">play"){
+        //         message.channel.send(">play is used to play youtube videos in voice channels!");
+        //     }
+        //     if(!ytdl.validateURL(videoLink)){
+        //         message.channel.send("Please provide a valid youtube link!");
+        //     } else if(!message.member.voice.channel){
+        //         message.channel.send("Gotta join a VC! (and have me in it)");
+        //     } else {
+        //         message.channel.send("Playing your song!");
+        //         playSongFile(ytdl(videoLink));
+        //     }
+        // }
         // if(cmd === "video"){
         //     const videoLink = message.content.split(" ").slice(1).join(" ");
         //     if(message.content == ">video"){// && message.attachments.size == 0){
