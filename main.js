@@ -17,7 +17,7 @@ const prefix = '>';
 
 client.once('ready', () => {
     console.log('Idiot Bot is Online!');
-    client.user.setPresence({ activity: { name: "idiot bot trailer is still out now! https://www.youtube.com/watch?v=FZ0fpXJgd_8 {>help}" }, status: 'online'})
+    client.user.setPresence({ activity: { name: "rest in peace fellow bots, rythm and groovy... good thing i dont have >play! {>help}" }, status: 'online'})
     .then(() => console.log)
     .catch(console.error);
 });
@@ -96,6 +96,25 @@ client.once('ready', async () => {
         ]
     }
     });
+    // client.api.applications(client.user.id).commands.post({data: {
+    //     name: 'meme',
+    //     description: "Makes a funny image, try it out!",
+    //     options: [
+    //         {
+    //             name: 'top text',
+    //             description: 'the text on top',
+    //             required: true,
+    //             type: 3
+    //         },
+    //         {
+    //             name: 'bottom text',
+    //             description: 'the text on bottom',
+    //             required: true,
+    //             type: 3
+    //         }
+    //     ]
+    // }
+    // });
     client.api.applications(client.user.id).commands.post({data: {
         name: 'join',
         description: "I'll join the VC you are in!"
@@ -202,6 +221,64 @@ client.once('ready', async () => {
                     content: args.find(arg => arg.name === "message").value
                 }
             }});
+        // } else if(command === 'meme'){
+        //     let registeredText = message.content.split(" ").slice(1).join(" ");
+        //     if(registeredText.length > 0){
+        //         Canvas.registerFont('./times.ttf', { family: 'Times New Roman'});
+        //         const canvas = Canvas.createCanvas(700, 510);
+        //         const context = canvas.getContext('2d');
+
+        //         const background = await Canvas.loadImage('./background.jpg');
+        //         context.drawImage(background, 0, 0, canvas.width, canvas.height);
+                
+        //         let image;
+        //         if(!message.mentions.members.first() && message.attachments.size === 0){
+        //             image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
+        //         } else if(message.mentions.members.first() && message.attachments.size === 0) {
+        //             registeredText = message.content.split(" ").slice(2).join(" ");
+        //             image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
+        //         } else if(message.attachments.size > 0){
+        //             let attatchmentMessage = message.attachments.first().url
+        //             if(attatchmentMessage.endsWith(".png") || attatchmentMessage.endsWith(".jpg") || attatchmentMessage.endsWith(".gif") || attatchmentMessage.endsWith(".webp")){
+        //                 image = await Canvas.loadImage(message.attachments.first().url);
+        //             } else {
+        //                 if(!message.mentions.members.first()){
+        //                     image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
+        //                 } else if(message.mentions.members.first()) {
+        //                     registeredText = message.content.split(" ").slice(2).join(" ");
+        //                     image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
+        //                 }
+        //             }
+        //         }
+        //         context.drawImage(image, 100, 45, 500, 300);
+
+        //         context.strokeStyle = '#ffffff';
+        //         context.strokeRect(85, 30, 530, 330);
+
+        //         let textOne = registeredText;
+        //         let textTwo = " ";
+        //         if(registeredText.includes("|")){
+        //             textOne = registeredText.split("|")[0];
+        //             textTwo = registeredText.split("|")[1];
+        //         }
+        //         context.font = '30px "Times New Roman"';
+        //         context.fillStyle = '#ffffff';
+        //         context.textAlign = 'center';
+        //         context.fillText(textTwo, canvas.width / 2.05, canvas.height / 1.05);
+                
+        //         context.font = '55px "Times New Roman"';
+        //         context.fillText(textOne, canvas.width / 2, canvas.height / 1.2);
+        //         context.textAlign = 'center';
+
+        //         const attatchment = new Discord.MessageAttachment(canvas.toBuffer(), 'memeohp.jpg');
+        //         message.channel.send(attatchment);
+        //     }
+        //     client.api.interactions(interaction.id, interaction.token).callback.post({data: {
+        //         type: 4,
+        //         data: {
+        //             content: args.find(arg => arg.name === "message").value
+        //         }
+        //     }});
         } else if(command === 'join'){
             let statusIn = "";
             // const authorUser = interaction.guild.members.cache.find(m => m.id === interaction.user.id);
@@ -367,30 +444,30 @@ client.on('message', message =>{
                 message.channel.send("did you have a brain fart");
             }
         }
-        if(cmd === 'getsecretserver'){
-            if(message.author.id === "216253735670775809"){
-                //console.log(client.guilds.cache.map(e=>e.toString()).join("\n"));
-                const riotServer = client.guilds.cache.find(serverName => serverName.name === "Bot Hell, Inc.");
-                riotServer.channels.create("am-i-in-yet", {
-                    type: "text",
-                    permissionOverwrites: [
-                        {
-                          id: message.guild.roles.everyone,
-                          allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
-                          deny: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
-                        }
-                    ]
-                })
-                const guildChannel = riotServer.channels.cache.find(channelName => channelName.name === "am-i-in-yet").id;
-                const riotChannel = client.channels.cache.get(guildChannel).send("jsguio");
-                riotChannel.createInvite().then(invite => {
-                    message.member.user.dmChannel.send("Secret invite!!!!! https://discord.gg/" + invite.code);
-                });
-                //message.channel.send(riotServer.members.cache.map(membersThere => membersThere.toString()).join("\n"));
-            } else {
-                message.channel.send("Sorry man, you don't have access to this command!");
-            }
-        }
+        // if(cmd === 'getsecretserver'){
+        //     if(message.author.id === "216253735670775809"){
+        //         //console.log(client.guilds.cache.map(e=>e.toString()).join("\n"));
+        //         const riotServer = client.guilds.cache.find(serverName => serverName.name === "Bot Hell, Inc.");
+        //         riotServer.channels.create("am-i-in-yet", {
+        //             type: "text",
+        //             permissionOverwrites: [
+        //                 {
+        //                   id: message.guild.roles.everyone,
+        //                   allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY'],
+        //                   deny: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'READ_MESSAGE_HISTORY']
+        //                 }
+        //             ]
+        //         })
+        //         const guildChannel = riotServer.channels.cache.find(channelName => channelName.name === "am-i-in-yet").id;
+        //         const riotChannel = client.channels.cache.get(guildChannel).send("jsguio");
+        //         riotChannel.createInvite().then(invite => {
+        //             message.member.user.dmChannel.send("Secret invite!!!!! https://discord.gg/" + invite.code);
+        //         });
+        //         //message.channel.send(riotServer.members.cache.map(membersThere => membersThere.toString()).join("\n"));
+        //     } else {
+        //         message.channel.send("Sorry man, you don't have access to this command!");
+        //     }
+        // }
         if(cmd === 'quote'){
             message.channel.messages.fetch({ limit: 2}).then(messages => {
                 let lastMessage = messages.last();
@@ -431,20 +508,8 @@ client.on('message', message =>{
             })
             .catch(console.error);
         }
-        if(cmd === 'john' || cmd === 'jon' || cmd === "johnothan" || cmd === 'johnathan' || cmd === "haha" || cmd === 'jonathan' || cmd === 'jonothan'){
-            message.channel.messages.fetch({ limit: 2}).then(messages => {
-                let johnMessage = messages.last();
-                if(!johnMessage.author.bot && !johnMessage.toString().includes("@everyone") && !johnMessage.toString().includes("@here") && johnMessage.mentions.roles.size === 0 && johnMessage.content.length <= 1900){
-                    message.channel.send("HAHA Jonathan, you are " + johnMessage.toString() + "!");
-                } else if(johnMessage.author.bot) {
-                    message.channel.send("Can't Jonathan a bot, idiot.");
-                } else if(!johnMessage.content.includes("@everyone") || !johnMessage.content.includes("@here") || johnMessage.mentions.roles.size > 0){
-                    message.channel.send("Nice try there, that was hilarious!");
-                } else if(johnMessage.content.length >= 1900){
-                    message.channel.send("Mucho texto!");
-                }
-            })
-            .catch(console.error);
+        if(cmd === 'serverpfp' || cmd === 'servericon' || cmd == 'serverpicture' || cmd === 'serverpic'){
+            message.channel.send(message.guild.iconURL());
         }
         if(cmd === 'servercount'){
             message.channel.send(`I am currently in **${client.guilds.cache.size}** servers!`);
@@ -457,9 +522,12 @@ client.on('message', message =>{
                 .setColor('#009DFF')
                 .setTitle('Prefix: >')
                 .addFields(
-                    { name: 'Basic Commands:', value: '>idiot/\n>danny/\n>fat/\n>cheese/\n>swear/\n>>\n>ok\n>version\n>invite\n\n\n*a / behind a command means it is also compatible as a slash command.', inline: true},
-                    { name: 'Miscellaneous Commands:', value: '>say/\n>react\n>whos\n>quote\n>delete\n>membercount\n>servercount\n>random\n>math\n>ping\n>meme\n>meme2\n>pfp\n>rps', inline: true},
+                    { name: 'Text Commands:', value: '>idiot/\n>danny/\n>fat/\n>cheese/\n>swear/\n>>\n>ok\n>version\n>invite', inline: true},
+                    { name: 'Interactive Commands:', value: '>say/\n>react\n>whos\n>quote\n>delete\n>membercount\n>servercount\n>random\n>ping\n>rps', inline: true},
                     { name: 'Voice Commands:', value: '>join\n>leave\n>voicemembercount\n>rickroll\n>fart/\n>boom\n>avocado\n>chip/\n>say', inline: true},
+                    { name: 'Image Commands:', value: '>pfp\n>servericon\n>meme\n>meme2\n>homeless\n\n\n*A / after a command means it is also compatible as a slash command.', inline: true},
+                    { name: '⠀', value: '⠀', inline: true},
+                    { name: '⠀', value: '⠀', inline: true},
                     { name: 'Support Server:', value: '<https://discord.gg/4kwx3ezpNW>', inline: true},
                     { name: 'Version:', value: 'Idiot Bot is on **v. ' + require('./package.json').version + "**.", inline: true},
                     { name: 'Creator:', value: 'Idiot Bot was created by 94 Central, <https://www.youtube.com/94Central>.'}
@@ -472,8 +540,8 @@ client.on('message', message =>{
 // let playQueue = [];
 client.on('message', async message =>{
     if(!message.content.startsWith(prefix) || message.author.bot || message.channel.type === 'dm') return;
-    
-    if((message.content.includes("@everyone") || message.content.includes("@here")) && !message.member.permissions.has("MENTION_EVERYONE") || message.mentions.roles.size > 0 || message.content.length >= 1950){
+
+    if((message.content.includes("@everyone") || message.content.includes("@here")) && !message.member.permissions.has("MENTION_EVERYONE") || message.content.length >= 1950){
         message.channel.send("Nice try there, that was hilarious!");
     } else {
         const args = message.content.slice(prefix.length).split(/ +/);
@@ -562,7 +630,7 @@ client.on('message', async message =>{
             playSongFile('./audio/chip.mp3');
         }
         if(cmd === 'boom'){
-            message.channel.send("NO MORE RACISM");
+            message.channel.send("* vine boom sound effect *");
             playSongFile('./audio/boom.mp3');
         }
         // if(cmd === 'play'){
@@ -744,6 +812,34 @@ client.on('message', async message =>{
                 }
             }
         }
+        if(cmd === "homeless"){
+            const canvas = Canvas.createCanvas(700, 510);
+            const context = canvas.getContext('2d');
+
+            let image;
+            if(!message.mentions.members.first() && message.attachments.size === 0){
+                image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
+            } else if(message.mentions.members.first() && message.attachments.size === 0) {
+                registeredText = message.content.split(" ").slice(2).join(" ");
+                image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
+            } else if(message.attachments.size > 0){
+                let attatchmentMessage = message.attachments.first().url
+                if(attatchmentMessage.endsWith(".png") || attatchmentMessage.endsWith(".jpg") || attatchmentMessage.endsWith(".gif") || attatchmentMessage.endsWith(".webp")){
+                    image = await Canvas.loadImage(message.attachments.first().url);
+                } else {
+                    if(!message.mentions.members.first()){
+                        image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
+                    } else if(message.mentions.members.first()) {
+                        registeredText = message.content.split(" ").slice(2).join(" ");
+                        image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
+                    }
+                }
+            }
+            context.drawImage(image, 0, 0, canvas.width*2, canvas.height);
+
+            const attatchment = new Discord.MessageAttachment(canvas.toBuffer(), 'gothomeless.jpg');
+            message.channel.send(attatchment);
+        }
         if(cmd === "meme" || cmd === "image"){
             let registeredText = message.content.split(" ").slice(1).join(" ");
             if(registeredText.length > 0){
@@ -855,8 +951,11 @@ client.on('message', async message =>{
             if(message.content == ">say"){
                 message.channel.send(">say is for repeating what you say to me back to you. Additionally, the message I send will be repeated in voice chat, if both of us are in the same one!")// If you react to one of my >say messages, I'll dm you the person who requested the command.");
             } else {
-                message.channel.send(whatSaid);
-                if(message.channel.type !== 'dm'){
+                if(message.mentions.roles.size > 0){
+                    message.channel.send("Nice try there, that was hilarious!");
+                } else {
+                    message.channel.send(whatSaid);
+                }
                     if(message.member.voice.channel && selfBot.voice.channel){
                         if(message.member.voice.channel.id === selfBot.voice.channel.id && whatSaid.length < 200){
                             if (!fileService.existsSync('./cache')){
@@ -880,9 +979,7 @@ client.on('message', async message =>{
                             message.channel.send("Sorry! You're message was too long for voice chat...");
                         }
                     }
-                }
-                // let authorSay = " ";
-                // authorSay = message.author.tag;
+                // let authorSay = message.author.tag;
                 // client.on("messageReactionAdd", (reaction, user) => {
                 //     user.send("The author of the >say message you requested is **" + authorSay + "**!");
                 // });
@@ -927,6 +1024,19 @@ client.on('message', async message =>{
         //         }, 8000);
         //     }
         // }
+        if(cmd === 'pin'){
+            let pinSize = (await message.channel.messages.fetchPinned()).size;
+            if(message.reference && pinSize < 50 &&message.member.hasPermission("MANAGE_MESSAGES")){
+                message.channel.messages.fetch(message.reference.messageID).then(messageFetched => messageFetched.pin());
+            } else if(!message.reference && message.member.hasPermission("MANAGE_MESSAGES")) {
+                message.channel.send("You gotta reply to someone!");
+                message.channel.send("'>pin' is meant to pin messages in channels. I suggest getting permissions to manage messages to use this command!");
+            } else if(pinSize >= 50 && message.member.hasPermission("MANAGE_MESSAGES")){
+                message.channel.send("Can't pin that message, most likely because the pin limit is full, at 50 messages.")
+            } else if(!message.member.hasPermission("MANAGE_MESSAGES")){
+                message.channel.send("'>pin' is meant to pin messages in channels. I suggest getting permissions to manage messages to use this command!");
+            }
+        }
         if(cmd === 'poopy'){
             const editedMessage = await message.channel.send("https://media.discordapp.net/attachments/739702645454929992/785977747151257640/iseepoopy-1.gif");
             setTimeout(() => {
