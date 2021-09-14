@@ -525,7 +525,7 @@ client.on('message', message =>{
                     { name: 'Text Commands:', value: '>idiot/\n>danny/\n>fat/\n>cheese/\n>swear/\n>>\n>ok\n>version\n>invite', inline: true},
                     { name: 'Interactive Commands:', value: '>say/\n>react\n>whos\n>quote\n>delete\n>membercount\n>servercount\n>random\n>ping\n>rps', inline: true},
                     { name: 'Voice Commands:', value: '>join\n>leave\n>voicemembercount\n>rickroll\n>fart/\n>boom\n>avocado\n>chip/\n>say', inline: true},
-                    { name: 'Image Commands:', value: '>pfp\n>servericon\n>meme\n>meme2\n>homeless\n\n\n*A / after a command means it is also compatible as a slash command.', inline: true},
+                    { name: 'Image Commands:', value: '>pfp\n>servericon\n>meme\n>meme2\n>meme3\n>homeless\n\n\n*A / after a command means it is also compatible as a slash command.', inline: true},
                     { name: '⠀', value: '⠀', inline: true},
                     { name: '⠀', value: '⠀', inline: true},
                     { name: 'Support Server:', value: '<https://discord.gg/4kwx3ezpNW>', inline: true},
@@ -949,7 +949,7 @@ client.on('message', async message =>{
         if(cmd === "meme3" || cmd === "image3"){
             let registeredText = message.content.split(" ").slice(1).join(" ");
             if(registeredText.length > 0){
-                Canvas.registerFont("/Windows/Fonts/futura-extra-black-condensed.ttf", { family: 'Futura XBlkCn BT'});
+                Canvas.registerFont("/Windows/Fonts/futura-extra-black-condensed.ttf", { family: 'Times New Roman'});
                 const canvas = Canvas.createCanvas(1000, 1000);
                 const context = canvas.getContext('2d');
                 
@@ -983,7 +983,7 @@ client.on('message', async message =>{
                 //} so on
                 context.drawImage(image, 0, 120, canvas.width, canvas.height - 120);
 
-                context.font = '80px "Futura XBlkCn BT"';
+                context.font = '80px "Futura XBIkCn BT Extra Black"';
                 context.fillStyle = '#000000';
                 context.textAlign = 'center';
                 context.fillText(registeredText, canvas.width / 2, canvas.height / 11);
