@@ -946,6 +946,54 @@ client.on('message', async message =>{
                 message.channel.send("'>meme2' is used to generate a meme! You can also optionally attatch an image to the message! You can include a | somewhere in there to include bottom text.\n\nExample: '>meme2 ohp | ohp' or, you can ping someone, '>meme2 @user ohp | ohp' like that!\n\nEnjoy the command!");
             }
         }
+        if(cmd === "meme3" || cmd === "image3"){
+            let registeredText = message.content.split(" ").slice(1).join(" ");
+            if(registeredText.length > 0){
+                Canvas.registerFont("/Windows/Fonts/futura-extra-black-condensed.ttf", { family: 'Futura XBlkCn BT'});
+                const canvas = Canvas.createCanvas(1000, 1000);
+                const context = canvas.getContext('2d');
+                
+                const background = await Canvas.loadImage('./whitespace.jpg');
+                context.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+                let image;
+                if(!message.mentions.members.first() && message.attachments.size === 0){
+                    image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
+                } else if(message.mentions.members.first() && message.attachments.size === 0) {
+                    registeredText = message.content.split(" ").slice(2).join(" ");
+                    image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
+                } else if(message.attachments.size > 0){
+                    let attatchmentMessage = message.attachments.first().url
+                    if(attatchmentMessage.endsWith(".png") || attatchmentMessage.endsWith(".jpg") || attatchmentMessage.endsWith(".gif") || attatchmentMessage.endsWith(".webp")){
+                        image = await Canvas.loadImage(message.attachments.first().url);
+                    } else {
+                        if(!message.mentions.members.first()){
+                            image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
+                        } else if(message.mentions.members.first()) {
+                            registeredText = message.content.split(" ").slice(2).join(" ");
+                            image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
+                        }
+                    }
+                }
+                //let heightCanvas = canvas.height - 100
+                //if(registeredText.length >= {long enough to go offscreen} && registeredText.length < {second line long enough to go offscreen}){
+                //    heightCanvas - 200
+                //} else if(registeredText.length >= {second line long enough to go offscreen}){
+                //    
+                //} so on
+                context.drawImage(image, 0, 120, canvas.width, canvas.height - 120);
+
+                context.font = '80px "Futura XBlkCn BT"';
+                context.fillStyle = '#000000';
+                context.textAlign = 'center';
+                context.fillText(registeredText, canvas.width / 2, canvas.height / 11);
+                
+                const attatchment = new Discord.MessageAttachment(canvas.toBuffer(), 'meme2ohp.jpg');
+                message.channel.send(attatchment);
+            } else {
+                message.channel.send("'>meme3' is used to generate a meme! You can also optionally attatch an image to the message! You can include a | somewhere in there to include bottom text.\n\nExample: '>meme3 ohp | ohp' or, you can ping someone, '>meme3 @user ohp | ohp' like that!\n\nEnjoy the command!");
+            }
+        }
         function sayCommand(){
             const whatSaid = message.content.split(" ").slice(1).join(" ");
             if(message.content == ">say"){
