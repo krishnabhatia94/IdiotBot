@@ -509,7 +509,8 @@ client.on('message', message =>{
             .catch(console.error);
         }
         if(cmd === 'serverpfp' || cmd === 'servericon' || cmd == 'serverpicture' || cmd === 'serverpic'){
-            message.channel.send(message.guild.iconURL());
+            let serverIcon = message.guild.iconURL();
+            message.channel.send(`If the server's icon isn't a gif, this works: ${serverIcon}\n\n If it is a gif, then this should work: ${serverIcon.replace(".webp", ".gif")}`);
         }
         if(cmd === 'servercount'){
             message.channel.send(`I am currently in **${client.guilds.cache.size}** servers!`);
@@ -816,29 +817,54 @@ client.on('message', async message =>{
             const canvas = Canvas.createCanvas(700, 510);
             const context = canvas.getContext('2d');
 
+            const secondWord = message.content.split(" ").slice(1).join(" ");
+            const thirdWord = message.content.split(" ").slice(2).join(" ");
+
             let image;
+            let switchCaseArgument;
             if(!message.mentions.members.first() && message.attachments.size === 0){
                 image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
+                switchCaseArgument = secondWord;
             } else if(message.mentions.members.first() && message.attachments.size === 0) {
                 registeredText = message.content.split(" ").slice(2).join(" ");
                 image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
+                switchCaseArgument = thirdWord;
             } else if(message.attachments.size > 0){
                 let attatchmentMessage = message.attachments.first().url
                 if(attatchmentMessage.endsWith(".png") || attatchmentMessage.endsWith(".jpg") || attatchmentMessage.endsWith(".gif") || attatchmentMessage.endsWith(".webp")){
                     image = await Canvas.loadImage(message.attachments.first().url);
+                    switchCaseArgument = secondWord;
                 } else {
                     if(!message.mentions.members.first()){
                         image = await Canvas.loadImage(message.member.user.displayAvatarURL({ format: 'png' }));
+                        switchCaseArgument = secondWord;
                     } else if(message.mentions.members.first()) {
                         registeredText = message.content.split(" ").slice(2).join(" ");
                         image = await Canvas.loadImage(message.mentions.members.first().user.displayAvatarURL({ format: 'png' }));
+                        switchCaseArgument = thirdWord;
                     }
                 }
             }
-            context.drawImage(image, 0, 0, canvas.width*2, canvas.height);
+            switch(switchCaseArgument){
+                case 'left':
+                    context.drawImage(image, 0, 0, canvas.width*2, canvas.height);
+                    break;
+                case 'right':
+                    context.drawImage(image, -700, 0, canvas.width*2, canvas.height);
+                    break;
+                case 'up':
+                    context.drawImage(image, 0, 0, canvas.width, canvas.height*2);
+                    break;
+                case 'down':
+                    context.drawImage(image, 0, -500, canvas.width, canvas.height*2);
+                    break;
+                default:
+                    context.drawImage(image, 0, 0, canvas.width*2, canvas.height);
+            }
 
             const attatchment = new Discord.MessageAttachment(canvas.toBuffer(), 'gothomeless.jpg');
-            message.channel.send(attatchment);
+            let homeless = await message.channel.send(attatchment);
+            homeless.edit("By the way, you can use >homeless left, >homeless right, >homeless up, and >homeless down. If you want to mention someone, put the mention before the direction.")
         }
         if(cmd === "meme" || cmd === "image"){
             let registeredText = message.content.split(" ").slice(1).join(" ");
