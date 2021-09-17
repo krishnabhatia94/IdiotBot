@@ -1001,15 +1001,9 @@ client.on('message', async message =>{
                         }
                     }
                 }
-                //let heightCanvas = canvas.height - 100
-                //if(registeredText.length >= {long enough to go offscreen} && registeredText.length < {second line long enough to go offscreen}){
-                //    heightCanvas - 200
-                //} else if(registeredText.length >= {second line long enough to go offscreen}){
-                //    
-                //} so on
                 context.drawImage(image, 0, 120, canvas.width, canvas.height - 120);
 
-                context.font = '80px "Futura XBIkCn BT Extra Black"';
+                context.font = `80px "Futura XBIkCn BT Extra Black"`;
                 context.fillStyle = '#000000';
                 context.textAlign = 'center';
                 context.fillText(registeredText, canvas.width / 2, canvas.height / 11);
