@@ -924,7 +924,6 @@ client.on('message', async message =>{
         if(cmd === "meme2" || cmd === "image2"){
             let registeredText = message.content.split(" ").slice(1).join(" ");
             if(registeredText.length > 0){
-                //Canvas.registerFont("/Windows/Fonts/impact.ttf", { family: 'Times New Roman'});
                 const canvas = Canvas.createCanvas(1000, 800);
                 const context = canvas.getContext('2d');
                 
@@ -1003,12 +1002,14 @@ client.on('message', async message =>{
                 }
                 context.drawImage(image, 0, 120, canvas.width, canvas.height - 120);
 
-                context.font = `${Math.round(80 - ((registeredText.length + 240)/3 - 80))}px "Futura XBlkCn BT"`; //text length + base value over 3 for optimal size, then subtracted from 80 and then subtracted to 80, then rounded.
+                let fontSize = Math.round(80 - ((registeredText.length + 320)/4 - 80));
+
+                context.font = `${fontSize}px "Futura XBlkCn BT"`; //text length + base value over 3 for optimal size, then subtracted from 80 and then subtracted to 80, then rounded.
                 context.fillStyle = '#000000';
                 context.textAlign = 'center';
                 context.fillText(registeredText, canvas.width / 2, canvas.height / 11);
                 
-                const attatchment = new Discord.MessageAttachment(canvas.toBuffer(), 'meme2ohp.jpg');
+                const attatchment = new Discord.MessageAttachment(canvas.toBuffer(), 'meme3ohp.jpg');
                 message.channel.send(attatchment);
             } else {
                 message.channel.send("'>meme3' is used to generate a meme! You can also optionally attatch an image to the message! You can include a | somewhere in there to include bottom text.\n\nExample: '>meme3 ohp | ohp' or, you can ping someone, '>meme3 @user ohp | ohp' like that!\n\nEnjoy the command!");
