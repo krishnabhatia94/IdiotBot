@@ -924,7 +924,7 @@ client.on('message', async message =>{
         if(cmd === "meme2" || cmd === "image2"){
             let registeredText = message.content.split(" ").slice(1).join(" ");
             if(registeredText.length > 0){
-                Canvas.registerFont("/Windows/Fonts/impact.ttf", { family: 'Times New Roman'});
+                //Canvas.registerFont("/Windows/Fonts/impact.ttf", { family: 'Times New Roman'});
                 const canvas = Canvas.createCanvas(1000, 800);
                 const context = canvas.getContext('2d');
                 
@@ -975,7 +975,7 @@ client.on('message', async message =>{
         if(cmd === "meme3" || cmd === "image3"){
             let registeredText = message.content.split(" ").slice(1).join(" ");
             if(registeredText.length > 0){
-                Canvas.registerFont("/Windows/Fonts/futura-extra-black-condensed.ttf", { family: 'Times New Roman'});
+                //Canvas.registerFont("/Windows/Fonts/futura-extra-black-condensed.ttf", { family: 'Times New Roman'});
                 const canvas = Canvas.createCanvas(1000, 1000);
                 const context = canvas.getContext('2d');
                 
@@ -1003,7 +1003,7 @@ client.on('message', async message =>{
                 }
                 context.drawImage(image, 0, 120, canvas.width, canvas.height - 120);
 
-                context.font = `80px "Futura XBIkCn BT Extra Black"`;
+                context.font = `${Math.round(80 - ((registeredText.length + 240)/3 - 80))}px "Futura XBlkCn BT"`; //text length + base value over 3 for optimal size, then subtracted from 80 and then subtracted to 80, then rounded.
                 context.fillStyle = '#000000';
                 context.textAlign = 'center';
                 context.fillText(registeredText, canvas.width / 2, canvas.height / 11);
