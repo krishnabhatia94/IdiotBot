@@ -975,7 +975,15 @@ client.on('message', async message =>{
             let registeredText = message.content.split(" ").slice(1).join(" ");
             if(registeredText.length > 0){
                 //Canvas.registerFont("/Windows/Fonts/futura-extra-black-condensed.ttf", { family: 'Times New Roman'});
-                const canvas = Canvas.createCanvas(1000, 1000);
+                let canvas;
+                let imageY
+                if(registeredText.length < 30){
+                    canvas = Canvas.createCanvas(1000, 1000);
+                    imageY = 120;
+                } else if(registeredText.length > 30) {
+                    canvas = Canvas.createCanvas(1000, 1120);
+                    imageY = 240;
+                }
                 const context = canvas.getContext('2d');
                 
                 const background = await Canvas.loadImage('./whitespace.jpg');
@@ -1000,15 +1008,19 @@ client.on('message', async message =>{
                         }
                     }
                 }
-                context.drawImage(image, 0, 120, canvas.width, canvas.height - 120);
+                context.drawImage(image, 0, imageY, canvas.width, canvas.height - imageY);
 
-                let fontSize = Math.round(80 - ((registeredText.length + 320)/4 - 80));
-
-                context.font = `${fontSize}px "Futura XBlkCn BT"`; //text length + base value over 3 for optimal size, then subtracted from 80 and then subtracted to 80, then rounded.
+                //let fontSize = Math.round(80 - ((registeredText.length + 320)/4 - 80));
+                context.font = `80px "Futura XBlkCn BT"`; //text length + base value over 3 for optimal size, then subtracted from 80 and then subtracted to 80, then rounded.
                 context.fillStyle = '#000000';
                 context.textAlign = 'center';
-                context.fillText(registeredText, canvas.width / 2, canvas.height / 11);
-                
+                if(registeredText.length < 30){
+                    context.fillText(registeredText, canvas.width / 2, canvas.height / 11);
+                }
+                if(registeredText.length > 30){
+                    context.fillText(registeredText.substring(0, (registeredText.length/2)), canvas.width / 2, canvas.height / 11);
+                    context.fillText(registeredText.substring((registeredText.length/2)), canvas.width / 2, canvas.height / 5.5);
+                }
                 const attatchment = new Discord.MessageAttachment(canvas.toBuffer(), 'meme3ohp.jpg');
                 message.channel.send(attatchment);
             } else {
