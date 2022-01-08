@@ -9,7 +9,8 @@
   "author": "94 Central",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/opus": "github:discordjs/opus",
+    "@discordjs/opus": "^0.5.3",
+    "@discordjs/voice": "^0.7.5",
     "canvas": "^2.8.0",
     "discord-reply": "^0.1.2",
     "discord.js": "^12.5.3",

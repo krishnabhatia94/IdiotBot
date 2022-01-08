@@ -17,9 +17,7 @@ const prefix = '>';
 
 client.once('ready', () => {
     console.log('Idiot Bot is Online!');
-    client.user.setPresence({ activity: { name: "rest in peace fellow bots, rythm and groovy... good thing i dont have >play! {>help}" }, status: 'online'})
-    .then(() => console.log)
-    .catch(console.error);
+    client.user.setPresence({ activity: { name: "where am i- oh i found me {>help}" }, status: 'online'});
 });
 
 const guildID = '791784654566064128';
@@ -381,14 +379,13 @@ client.on('message', message =>{
             } else {
                 let numberMessage = parseInt(message.content.split(" ").slice(2).join(" "), 10)+1; //gets the message to react to from message, and converts it to a number
 
-                const emojiList = message.guild.emojis.cache.map(e=>e.toString()).join(" "); // list of all emotes in server
                 let emoteCut = message.content.split(" ").slice(1).join(" ").replace(message.content.split(" ").slice(2).join(" "), ""); // gets the emote from the message
                 let rctEmote = client.emojis.cache.find(emoji => emoji.name === emoteCut.trim()); // finding emote in server emote list
 
                 if(numberMessage !== 'NaN' && numberMessage < 20){ // checks if its a number, and if it is less than 20 messages ago
                     message.channel.messages.fetch({ limit: numberMessage}).then(messages => { // finds which message to react to
                         let messageReact = messages.last();
-                        if(typeof(rctEmote) !== "undefined"){ // if emojiList var type is not undefined, react the emote!
+                        if(typeof(rctEmote) !== "undefined"){ // if the emoji was found when it was defined, react the emote!
                             messageReact.react(rctEmote);
                         } else { // if emote not recognized
                             message.channel.send("That emote's not in any servers I'm in, moron. (Try removing the :'s if there are any.)");
@@ -516,7 +513,9 @@ client.on('message', message =>{
             message.channel.send(`I am currently in **${client.guilds.cache.size}** servers!`);
         }
         if(cmd === 'restart' || cmd === 'refresh'){
-            process.exit(1);
+            if(message.author.id === "216253735670775809"){
+                process.exit(1);
+            }
         }
         if(cmd === 'help'){
             const helpMessage = new Discord.MessageEmbed()
@@ -1027,6 +1026,21 @@ client.on('message', async message =>{
                 message.channel.send("'>meme3' is used to generate a meme! You can also optionally attatch an image to the message! You can include a | somewhere in there to include bottom text.\n\nExample: '>meme3 ohp | ohp' or, you can ping someone, '>meme3 @user ohp | ohp' like that!\n\nEnjoy the command!");
             }
         }
+        // if(cmd === "parnet" || cmd === "parnet"){
+        //     if(!message.reference || message.content.split(" ").slice(1).join(" ") === ""){
+        //         message.channel.send("'>parnet' is an image based command. Please reply to someone in order to use the command, and add two words after!\n\nExample: https://cdn.discordapp.com/attachments/804051687114276875/896523822767964171/unknown.png");
+        //     } else {
+        //         const registeredText = message.content.split(" ").slice(1).join(" ");
+        //         const canvas = Canvas.createCanvas(858, 900);
+        //         const context = canvas.getContext('2d');
+
+        //         const base = await Canvas.loadImage('./parnets.png');
+        //         context.drawImage(base, 0, 0, canvas.width, canvas.height);
+
+        //         const attatchment = new Discord.MessageAttachment(canvas.toBuffer(), 'meme3ohp.jpg');
+        //         message.channel.send(attatchment);
+        //     }
+        // }
         function sayCommand(){
             const whatSaid = message.content.split(" ").slice(1).join(" ");
             if(message.content == ">say"){
