@@ -226,7 +226,7 @@ client.once('ready', async () => {
         //         const canvas = Canvas.createCanvas(700, 510);
         //         const context = canvas.getContext('2d');
 
-        //         const background = await Canvas.loadImage('./background.jpg');
+        //         const background = await Canvas.loadImage('./blackspace.jpg');
         //         context.drawImage(background, 0, 0, canvas.width, canvas.height);
                 
         //         let image;
@@ -899,7 +899,7 @@ client.on('messageCreate', async message =>{
                 const canvas = Canvas.createCanvas(700, 510);
                 const context = canvas.getContext('2d');
 
-                const background = await Canvas.loadImage('./background.jpg');
+                const background = await Canvas.loadImage('./blackspace.jpg');
                 context.drawImage(background, 0, 0, canvas.width, canvas.height);
                 
                 let image;
