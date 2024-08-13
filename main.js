@@ -233,7 +233,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
             }
             break;
         case "caption1":
-            interaction.deferReply();
+            await interaction.deferReply();
             canvas.registerFont('./fonts/impact.ttf', { family: 'Impact'});
             let image;
             const output = canvas.createCanvas(512, 512);
@@ -275,7 +275,8 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
                 context.strokeText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
             }
             const outimage = new Discord.AttachmentBuilder(output.toBuffer(), 'captionone.jpg');
-            reply("*Feature is in beta!", true, [outimage]);
+            try{await interaction.editReply({content: "*Feature is in beta!", files: [outimage]});} catch {await interaction.editReply("Something went wrong :(");}
+            //reply("*Feature is in beta!", true, [outimage]);
             break;
     }
 });
