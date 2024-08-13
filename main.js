@@ -27,11 +27,11 @@ rest.put(Discord.Routes.applicationCommands(clientID), { body: [] })
 client.once('ready', () => {
     console.log('Idiot Bot is Online!');
     client.user.setPresence({
-        status: 'idle',
+        status: 'online',
         activities: [{
             type: Discord.ActivityType.Custom,
             name: 'customname',
-            state: '⚠️currently on maintenance, slowly bulding up command library'
+            state: '⚠️undergoing maintenance, hoping to regain full function soon, but all commands available are fully functional!'
         }]
     });
 
@@ -82,6 +82,8 @@ client.once('ready', () => {
 
 client.on(Discord.Events.InteractionCreate, async interaction => {
     if(!interaction.isChatInputCommand()) return;
+    
+    const self = message.guild.members.cache.get("771195366645039115");
 
     function reply(messageReply, isReply = true, filesAttached = []) {
         //messageReply is the content of the message
@@ -100,10 +102,12 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 
     function playAudioFile(pathToFile, err = false){
         try{
-            const connection = vc.getVoiceConnection(interaction.guild.id);
-            const player = vc.createAudioPlayer();
-            connection.subscribe(player);
-            player.play(vc.createAudioResource(pathToFile));
+            if(message.member.voice.channel.id == self.voice.channel.id){
+                const connection = vc.getVoiceConnection(interaction.guild.id);
+                const player = vc.createAudioPlayer();
+                connection.subscribe(player);
+                player.play(vc.createAudioResource(pathToFile));
+            }
         } catch {
             if(err) reply("Either both of us aren't in the same voice channel, or someone ate all my wiring.");
         }
@@ -186,6 +190,7 @@ client.on("messageCreate", message =>{
     if(!message.content.startsWith(prefix) || message.author.bot) return;
     
     const args = message.content.slice(prefix.length).split(/ +/), cmd = args.shift().toLowerCase();
+    const self = message.guild.members.cache.get("771195366645039115");
 
     function send(messageReply, isReply = true) {
         //isReply is true, it replies to the command, if false, sends new message
@@ -193,6 +198,18 @@ client.on("messageCreate", message =>{
             message.reply(messageReply);
         } else {
             if(message.channel.type != Discord.ChannelType.GuildText) message.author.send(messageReply); else message.channel.send(messageReply);
+        }
+    }
+    function playAudioFile(pathToFile, err = false){
+        try{
+            if(message.member.voice.channel.id == self.voice.channel.id){
+                const connection = vc.getVoiceConnection(message.guild.id);
+                const player = vc.createAudioPlayer();
+                connection.subscribe(player);
+                player.play(vc.createAudioResource(pathToFile));
+            }
+        } catch {
+            if(err) reply("Either both of us aren't in the same voice channel, or someone ate all my wiring.");
         }
     }
 
@@ -203,6 +220,7 @@ client.on("messageCreate", message =>{
         } else {
             send("HAHAHBUHAIFIHAUIFHUAHAHAHAHHAHAHAHAHHAHAHAHHAA");
         }
+        playAudioFile('./audio/fart.mp3');
     }
 });
 
