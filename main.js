@@ -87,6 +87,30 @@ client.once('ready', () => {
                     .setName('user')
                     .setDescription('If you want to get someone else\'s pfp, put the user in here! By default, it\'ll be your pfp.')
             ),
+        caption1 = new Discord.SlashCommandBuilder()
+            .setName('caption1')
+            .setDescription('Adds a caption in style one to your profile picture, or an image you attach. Bottom text optional.')
+            .addStringOption(option =>
+                option
+                    .setName('texttop')
+                    .setDescription('The top text for your outputted image!')
+                    .setRequired(true)
+            )
+            .addStringOption(option =>
+                option
+                    .setName('textbottom')
+                    .setDescription('The bottom text for your outputted image!')
+            )
+            .addAttachmentOption(option =>
+                option
+                    .setName('image')
+                    .setDescription('If you want to make it output a specific image instead of your pfp!')
+            )
+            .addUserOption(option =>
+                option
+                    .setName('user')
+                    .setDescription('If you want to use someone\'s pfp as the base image, put the user in here!')
+            ),
     ];
     commands.forEach(command => {
         client.application.commands.create(command);
@@ -95,8 +119,9 @@ client.once('ready', () => {
 
 client.on(Discord.Events.InteractionCreate, async interaction => {
     if(!interaction.isChatInputCommand()) return;
-
-    const self = interaction.guild.members.cache.get("771195366645039115");
+    
+    let self;
+    try { self = interaction.guild.members.cache.get("771195366645039115"); } catch {};
 
     function reply(messageReply, isReply = true, filesAttached = []) {
         //messageReply is the content of the message
@@ -142,7 +167,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
             let playInVc = true;
             if(interaction.options.getBoolean('voice') == false) playInVc = false; else playInVc = true;
 
-            if(playInVc){
+            if(playInVc){ try { if(interaction.member.voice.channel.id == self.voice.channel.id){
                 if(interaction.options.getString('message').length < 1500){
                     if (!fileService.existsSync('./cache')){
                         fileService.mkdirSync('./cache');
@@ -155,7 +180,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
                 } else {
                     interaction.followUp({ content: "Sorry! You're message was too long for voice chat...", ephemeral: true });
                 }
-            }
+            } } catch { } }
             break;
         case "servericon":
             attachment = new Discord.AttachmentBuilder().setFile("./parnets.png");
@@ -206,6 +231,51 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
             } else {
                 reply(`Sure, here's <@${interaction.options.getUser('user').id}>'s avatar!`, true, [interaction.options.getUser('user').avatarURL()]);
             }
+            break;
+        case "caption1":
+            canvas.registerFont('./fonts/impact.ttf', { family: 'Impact'});
+            let image;
+            const output = canvas.createCanvas(512, 512);
+            const context = output.getContext('2d');
+            if(interaction.options.getAttachment('image') == null && interaction.options.getUser('user') != null){
+                image = await canvas.loadImage(interaction.options.getUser('user').displayAvatarURL({ extension: 'png' }));
+
+                context.drawImage(image, 0, 0, output.width, output.height);
+            } else if(interaction.options.getAttachment('image') != null && interaction.options.getUser('user') == null){
+                const width = interaction.options.getAttachment('image').width;
+                output.width = width; output.height = interaction.options.getAttachment('image').height;
+
+                let attachment = interaction.options.getAttachment('image').url.split('?')[0];
+                if(attachment.endsWith(".png") || attachment.endsWith(".jpg") || attachment.endsWith(".gif") || attachment.endsWith(".webp")){
+                    image = await canvas.loadImage(interaction.options.getAttachment('image').url);
+                }
+            } else {
+                image = await canvas.loadImage(interaction.user.displayAvatarURL({ extension: 'png' }));
+                context.drawImage(image, 0, 0, output.width, output.height);
+            }
+            context.drawImage(image, 0, 0, output.width, output.height);
+            
+            //text size equation: ((strlength / width) * (3/2)) + x
+            //const sizeTop = (((interaction.options.getString('texttop').length / output.width) * (800)) + 10);
+            context.font = `80px "Impact"`;
+            context.fillStyle = '#ffffff';
+            context.textAlign = 'center';
+            context.textBaseline = 'top';
+            context.fillText(interaction.options.getString('texttop'), output.width / 2, output.height / 14);
+            context.lineWidth = 3.3;
+            context.strokeStyle = '#000000';
+            context.strokeText(interaction.options.getString('texttop'), output.width / 2, output.height / 14);
+
+            if(interaction.options.getString('textbottom') != null){
+                const sizeBottom = (((interaction.options.getString('textbottom').length * output.width) * (3)) + 12);
+                context.font = `80px "Impact"`;
+                context.textAlign = 'center';
+                context.textBaseline = 'bottom';
+                context.fillText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
+                context.strokeText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
+            }
+            const outimage = new Discord.AttachmentBuilder(output.toBuffer(), 'captionone.jpg');
+            reply("*Feature is in beta!", true, [outimage]);
             break;
     }
 });
