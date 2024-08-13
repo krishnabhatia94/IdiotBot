@@ -1,12 +1,17 @@
 const Discord = require('discord.js');
-const { version } = require('ytdl-core');
 const client = new Discord.Client({intents: [
     Discord.GatewayIntentBits.Guilds,
     Discord.GatewayIntentBits.GuildMessages,
     Discord.GatewayIntentBits.MessageContent,
     Discord.GatewayIntentBits.GuildMembers,
-    Discord.GatewayIntentBits.DirectMessages
+    Discord.GatewayIntentBits.DirectMessages,
+    Discord.GatewayIntentBits.GuildVoiceStates
 ]});
+
+const canvas = require('canvas');
+const vc = require('@discordjs/voice');
+const fileService = require('fs');
+const tts = require('say');
 
 const token = 'NzcxMTk1MzY2NjQ1MDM5MTE1.GHW9rC.0B6CiqdxpzPtRcUIbq0BM1tvanlRTm0yV_dhB8';
 const clientID = '771195366645039115'
@@ -44,6 +49,12 @@ client.once('ready', () => {
                 option
                     .setName('message')
                     .setDescription('The message you want the bot to say')
+                    .setRequired(true)
+            )
+            .addBooleanOption(option =>
+                option
+                    .setName('voice')
+                    .setDescription('Whether or not you want it to be played in voice chat. On by default.')
             ),
         serverIcon = new Discord.SlashCommandBuilder()
             .setName('servericon')
@@ -51,25 +62,50 @@ client.once('ready', () => {
         versionCom = new Discord.SlashCommandBuilder()
             .setName('version')
             .setDescription('Sends the current version of the bot.'),
+        joinCom = new Discord.SlashCommandBuilder()
+            .setName('join')
+            .setDescription('Joins your discord voice channel! Must be in one already to work.'),
+        leaveCom = new Discord.SlashCommandBuilder()
+            .setName('leave')
+            .setDescription('Leaves your discord voice channel! Must be in one already to work.'),
+        vcMemberCount = new Discord.SlashCommandBuilder()
+            .setName('voicemembercount')
+            .setDescription('Tells you how many members your discord voice channel has! Must be in one already to work.'),
+        boomCom = new Discord.SlashCommandBuilder()
+            .setName('boom')
+            .setDescription('Vine boom! Also plays the sfx, like soundboard, if you\'re in a vc!'),
     ];
     commands.forEach(command => {
         client.application.commands.create(command);
     });
 });
 
-client.on(Discord.Events.InteractionCreate, interaction => {
+client.on(Discord.Events.InteractionCreate, async interaction => {
     if(!interaction.isChatInputCommand()) return;
 
-    function reply(messageReply, filesAttached = [], isReply = true) {
+    function reply(messageReply, isReply = true, filesAttached = []) {
+        //messageReply is the content of the message
         //isReply is true, it replies to the command, if false, sends new message
+        //filesAttached requires you to use [] around the parameter
         if(isReply){
-            interaction.reply(messageReply, {files: filesAttached});
+            interaction.reply({content: messageReply, files: filesAttached});
         } else {
             try{
                 interaction.deferReply();
                 interaction.deleteReply();
             } catch {}
-            if(interaction.guild === null) interaction.user.send(messageReply); else interaction.channel.send(messageReply);
+            if(interaction.guild === null) interaction.user.send({content: messageReply, files: filesAttached}); else interaction.channel.send({content: messageReply, files: filesAttached});
+        }
+    }
+
+    function playAudioFile(pathToFile, err = false){
+        try{
+            const connection = vc.getVoiceConnection(interaction.guild.id);
+            const player = vc.createAudioPlayer();
+            connection.subscribe(player);
+            player.play(vc.createAudioResource(pathToFile));
+        } catch {
+            if(err) reply("Either both of us aren't in the same voice channel, or someone ate all my wiring.");
         }
     }
 
@@ -81,15 +117,66 @@ client.on(Discord.Events.InteractionCreate, interaction => {
             reply(`Hello ${interaction.user.displayName}!`);
             break;
         case "say":
-            reply(interaction.options.getString('message') ?? "You forgot a message!", null, false);
+            reply(interaction.options.getString('message'), false);
+            let playInVc = true;
+            if(interaction.options.getBoolean('voice') == false) playInVc = false; else playInVc = true;
+            if(playInVc){
+                if(interaction.options.getString('message').length < 1500){
+                    if (!fileService.existsSync('./cache')){
+                        fileService.mkdirSync('./cache');
+                    }
+                    const timestamp = new Date().getTime();
+                    const soundPath = `./cache/${timestamp}.wav`;
+                    tts.export(interaction.options.getString('message'), null, 1, soundPath, (err) => {
+                        playAudioFile(soundPath);
+                    });
+                } else {
+                    interaction.followUp({ content: "Sorry! You're message was too long for voice chat...", ephemeral: true });
+                }
+            }
             break;
         case "servericon":
+            attachment = new Discord.AttachmentBuilder().setFile("./parnets.png");
             if(interaction.guild === null){
-                reply(`Sure, but this is a dm, moron. Here's my profile picture, I guess?? ${client.application.iconURL()}`);
-            } else reply(`Here you go! 😄 ${interaction.guild.iconURL()}`); //new Discord.AttachmentBuilder().setFile(interaction.guild.iconURL()));
+                reply("Sure, but this is a dm, moron. Here's my profile picture, I guess??", true, [client.user.avatarURL()]);
+            } else reply("sure, here!", true, [interaction.guild.iconURL()]);
             break;
         case "version":
-            reply(`Idiot Bot is on **v. ${require('./package.json').version}.`);
+            reply(`Idiot Bot is on v.**${require('./package.json').version}**.`);
+            break;
+        case "join":
+            try{
+                const connection = vc.joinVoiceChannel({
+                    channelId: interaction.member.voice.channel.id,
+                    guildId: interaction.guild.id,
+                    adapterCreator: interaction.guild.voiceAdapterCreator,
+                });
+                const player = vc.createAudioPlayer();
+                const subscription = connection.subscribe(player);
+                reply("I should've joined...!");
+            } catch {
+                reply("Either you aren't in a voice channel, or someone ate all my wiring.");
+            }
+            break;
+        case "leave":
+            try{
+                const connection = vc.getVoiceConnection(interaction.guild.id);
+                connection.destroy();
+                reply("Left!");
+            } catch {
+                reply("Either both of us aren't in the same voice channel, or someone ate all my wiring.");
+            }
+            break;
+        case "voicemembercount":
+            try{
+                reply(`There are *${interaction.member.voice.channel.members.size}* members in your voice chat!`);
+            } catch {
+                reply("Either you aren't in a voice channel, or someone ate all my wiring.");
+            }
+            break;
+        case "boom":
+            playAudioFile('./audio/boom.mp3');
+            reply("***VINE BOOM***");
             break;
     }
 });

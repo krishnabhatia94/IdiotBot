@@ -625,7 +625,7 @@ client.on('messageCreate', async message =>{
                     connection.destroy();
                     message.channel.send("I have left the voice channel...");
                 } else {
-                message.channel.send("I AM NOT IN A VOICE CHANNEL, YOU FRICKHEAD");
+                    message.channel.send("I AM NOT IN A VOICE CHANNEL, YOU FRICKHEAD");
                 }
             } else {
                 message.channel.send(">leave is used to get out of a voice channel. To get me out of one, you might want to try joining one first, you half brained mortal.")
