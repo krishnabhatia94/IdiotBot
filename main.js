@@ -27,11 +27,11 @@ rest.put(Discord.Routes.applicationCommands(clientID), { body: [] })
 client.once('ready', () => {
     console.log('Idiot Bot is Online!');
     client.user.setPresence({
-        status: 'idle',
+        status: 'online',
         activities: [{
             type: Discord.ActivityType.Custom,
             name: 'customname',
-            state: '⚠️undergoing maintenance, since im idle, that means i\'ll be going off and on again periodically!'
+            state: '⚠️undergoing maintenance, caption1 now in beta!'
         }]
     });
 
@@ -233,13 +233,13 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
             }
             break;
         case "caption1":
+            interaction.deferReply();
             canvas.registerFont('./fonts/impact.ttf', { family: 'Impact'});
             let image;
             const output = canvas.createCanvas(512, 512);
             const context = output.getContext('2d');
             if(interaction.options.getAttachment('image') == null && interaction.options.getUser('user') != null){
                 image = await canvas.loadImage(interaction.options.getUser('user').displayAvatarURL({ extension: 'png' }));
-
                 context.drawImage(image, 0, 0, output.width, output.height);
             } else if(interaction.options.getAttachment('image') != null && interaction.options.getUser('user') == null){
                 const width = interaction.options.getAttachment('image').width;
