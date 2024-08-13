@@ -27,11 +27,11 @@ rest.put(Discord.Routes.applicationCommands(clientID), { body: [] })
 client.once('ready', () => {
     console.log('Idiot Bot is Online!');
     client.user.setPresence({
-        status: 'online',
+        status: 'idle',
         activities: [{
             type: Discord.ActivityType.Custom,
             name: 'customname',
-            state: '⚠️undergoing maintenance, hoping to regain full function soon, but all commands available are fully functional!'
+            state: '⚠️undergoing maintenance, since im idle, that means i\'ll be going off and on again periodically!'
         }]
     });
 
@@ -79,6 +79,14 @@ client.once('ready', () => {
         boomCom = new Discord.SlashCommandBuilder()
             .setName('boom')
             .setDescription('Vine boom! Also plays the sfx, like soundboard, if you\'re in a vc!'),
+        pfp = new Discord.SlashCommandBuilder()
+            .setName('pfp')
+            .setDescription('Sends your, or a requested user\'s profile picture!')
+            .addUserOption(option =>
+                option
+                    .setName('user')
+                    .setDescription('If you want to get someone else\'s pfp, put the user in here! By default, it\'ll be your pfp.')
+            ),
     ];
     commands.forEach(command => {
         client.application.commands.create(command);
@@ -191,6 +199,13 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
         case "boom":
             playAudioFile('./audio/boom.mp3');
             reply("***VINE BOOM***");
+            break;
+        case "pfp":
+            if(interaction.options.getUser('user') == null){
+                reply("No problem, here's your profile picture!", true, [interaction.user.avatarURL()]);
+            } else {
+                reply(`Sure, here's <@${interaction.options.getUser('user').id}>'s avatar!`, true, [interaction.options.getUser('user').avatarURL()]);
+            }
             break;
     }
 });
