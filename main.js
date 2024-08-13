@@ -53,6 +53,11 @@ client.once('ready', () => {
             )
             .addBooleanOption(option =>
                 option
+                    .setName('keepauthor')
+                    .setDescription('Whether or not you want it to display that you authored the command. Off by default.')
+            )
+            .addBooleanOption(option =>
+                option
                     .setName('voice')
                     .setDescription('Whether or not you want it to be played in voice chat. On by default.')
             ),
@@ -82,8 +87,8 @@ client.once('ready', () => {
 
 client.on(Discord.Events.InteractionCreate, async interaction => {
     if(!interaction.isChatInputCommand()) return;
-    
-    const self = message.guild.members.cache.get("771195366645039115");
+
+    const self = interaction.guild.members.cache.get("771195366645039115");
 
     function reply(messageReply, isReply = true, filesAttached = []) {
         //messageReply is the content of the message
@@ -102,7 +107,7 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 
     function playAudioFile(pathToFile, err = false){
         try{
-            if(message.member.voice.channel.id == self.voice.channel.id){
+            if(interaction.member.voice.channel.id == self.voice.channel.id){
                 const connection = vc.getVoiceConnection(interaction.guild.id);
                 const player = vc.createAudioPlayer();
                 connection.subscribe(player);
@@ -121,9 +126,14 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
             reply(`Hello ${interaction.user.displayName}!`);
             break;
         case "say":
-            reply(interaction.options.getString('message'), false);
+            let author = false;
+            if(interaction.options.getBoolean('keepauthor') == true) author = true; else author = false;
+
+            if(!author) reply(interaction.options.getString('message'), false); else reply(interaction.options.getString('message'));
+            
             let playInVc = true;
             if(interaction.options.getBoolean('voice') == false) playInVc = false; else playInVc = true;
+
             if(playInVc){
                 if(interaction.options.getString('message').length < 1500){
                     if (!fileService.existsSync('./cache')){
