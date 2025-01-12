@@ -27,11 +27,11 @@ rest.put(Discord.Routes.applicationCommands(clientID), { body: [] })
 client.once('ready', () => {
     console.log('Idiot Bot is Online!');
     client.user.setPresence({
-        status: 'online',
+        status: 'idle',
         activities: [{
             type: Discord.ActivityType.Custom,
             name: 'customname',
-            state: '⚠️undergoing maintenance, caption1 now in beta!'
+            state: '⚠️undergoing maintenance, idle so ill be on and off periodically!'
         }]
     });
 
@@ -60,7 +60,8 @@ client.once('ready', () => {
                 option
                     .setName('voice')
                     .setDescription('Whether or not you want it to be played in voice chat. On by default.')
-            ),
+            )
+            .setContexts([0,1,2]),
         serverIcon = new Discord.SlashCommandBuilder()
             .setName('servericon')
             .setDescription('Gets the icon of the server and sends it!'),
@@ -259,18 +260,36 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
             //const sizeTop = (((interaction.options.getString('texttop').length / output.width) * (800)) + 10);
             context.font = `80px "Impact"`;
             context.fillStyle = '#ffffff';
-            context.textAlign = 'center';
             context.textBaseline = 'top';
-            context.fillText(interaction.options.getString('texttop'), output.width / 2, output.height / 14);
+
+            /*let totalText = interaction.options.getString('texttop').split(" ");
+            let progress = totalText[0];
+            let currentLine = progress;
+            let outString = " ";
+            for(let i = 1; i < totalText.length; i++){
+                let currentWord = totalText[i];
+                let currentWidth = context.measureText(currentLine + " " + currentWord).width;
+                if(currentWidth > output.width){
+                    progress = progress + "\n" + currentLine;
+                    currentLine = currentWord;
+                } else {
+                    currentLine += " " + currentWord;
+                }
+            }*/
+            outString = interaction.options.getString('texttop');
+
+            context.textAlign = 'center';
+            context.fillText(outString, output.width / 2, output.height / 14);
+
             context.lineWidth = 3.3;
             context.strokeStyle = '#000000';
-            context.strokeText(interaction.options.getString('texttop'), output.width / 2, output.height / 14);
+            context.strokeText(outString, output.width / 2, output.height / 14);
 
             if(interaction.options.getString('textbottom') != null){
                 const sizeBottom = (((interaction.options.getString('textbottom').length * output.width) * (3)) + 12);
                 context.font = `80px "Impact"`;
-                context.textAlign = 'center';
                 context.textBaseline = 'bottom';
+                context.textAlign = 'center';
                 context.fillText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
                 context.strokeText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
             }
