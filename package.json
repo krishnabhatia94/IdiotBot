@@ -9,17 +9,20 @@
   "author": "94 Central",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/opus": "^0.9.0",
-    "@discordjs/voice": "^0.17.0",
-    "canvas": "^2.11.2",
+    "@discordjs/opus": "^0.10.0",
+    "@discordjs/voice": "^0.19.2",
+    "@napi-rs/canvas": "^0.1.0",
     "discord.js": "^14.16.1",
     "ffmpeg": "^0.0.4",
-    "fs": "^0.0.1-security",
     "latest-version": "^9.0.0",
     "libsodium-wrappers": "^0.7.13",
+    "lodash": "^4.17.23",
     "opusscript": "^0.1.1",
-    "pm2": "^5.4.2",
     "say": "^0.16.0",
     "ytdl-core": "^4.9.0"
+  },
+  "overrides": {
+    "tar": "^7.0.0",
+    "lodash": "$lodash"
   }
 }
