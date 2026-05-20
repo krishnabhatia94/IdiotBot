@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "PM2 Run",
+            "dependsOn": [
+                "PM2 Core Boot",
+                "PM2 Show Logs"
+            ],
+            "dependsOrder": "sequence",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "PM2 Core Boot",
+            "type": "shell",
+            "command": "pm2 restart . || pm2 start .",
+            "presentation": {
+                "echo": false,
+                "reveal": "silent",
+                "panel": "shared",
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "PM2 Show Logs",
+            "type": "shell",
+            "command": "pm2 logs",
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": true,
+                "panel": "dedicated",
+                "showReuseMessage": false
+            },
+            "problemMatcher": []
+        }
+    ]
+}

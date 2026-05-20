@@ -13,10 +13,10 @@ const vc = require('@discordjs/voice');
 const fileService = require('fs');
 const tts = require('say');
 
-const token = 'NzcxMTk1MzY2NjQ1MDM5MTE1.GHW9rC.0B6CiqdxpzPtRcUIbq0BM1tvanlRTm0yV_dhB8';
+require('dotenv').config({ quiet: true });
 const clientID = '771195366645039115'
 
-rest = new Discord.REST().setToken(token);
+rest = new Discord.REST().setToken(process.env.DT);
 
 /*******************THIS CODE DELETES ALL APPLICATION COMMANDS WHEN RUN******************//*
 rest.put(Discord.Routes.applicationCommands(clientID), { body: [] })
@@ -24,24 +24,28 @@ rest.put(Discord.Routes.applicationCommands(clientID), { body: [] })
  	.catch(console.error);
 */
 
-client.once('ready', () => {
-    console.log('Idiot Bot is Online!');
+client.once(Discord.Events.ClientReady, c => {
+    console.log(`${c.user.username} is Online!`);
     client.user.setPresence({
         status: 'idle',
         activities: [{
             type: Discord.ActivityType.Custom,
             name: 'customname',
-            state: '⚠️undergoing maintenance, idle so ill be on and off periodically!'
+            state: '⚠️ stable for now, but many commands still in development!'
         }]
     });
 
     commands = [
         ping = new Discord.SlashCommandBuilder()
             .setName('ping')
-            .setDescription('Tests response time for basic text response.'),
+            .setDescription('Tests response time for basic text response.')
+            .setIntegrationTypes([0, 1])
+            .setContexts([0, 1, 2]),
         hello = new Discord.SlashCommandBuilder()
             .setName('hello')
-            .setDescription('Says hello to whoever sends the command!'),
+            .setDescription('Says hello to whoever sends the command!')
+            .setIntegrationTypes([0, 1])
+            .setContexts([0, 1, 2]),
         say = new Discord.SlashCommandBuilder()
             .setName('say')
             .setDescription('Says whatever you tell it to say!')
@@ -54,20 +58,39 @@ client.once('ready', () => {
             .addBooleanOption(option =>
                 option
                     .setName('keepauthor')
-                    .setDescription('Whether or not you want it to display that you authored the command. Off by default.')
+                    .setDescription('Whether or not you want it to display that you authored the command. On by default.')
             )
             .addBooleanOption(option =>
                 option
                     .setName('voice')
                     .setDescription('Whether or not you want it to be played in voice chat. On by default.')
             )
-            .setContexts([0,1,2]),
+            .setIntegrationTypes([0])
+            .setContexts([0]),
+        say = new Discord.SlashCommandBuilder()
+            .setName('say')
+            .setDescription('Says whatever you tell it to say!')
+            .addStringOption(option =>
+                option
+                    .setName('message')
+                    .setDescription('The message you want the bot to say')
+                    .setRequired(true)
+            )
+            .addBooleanOption(option =>
+                option
+                    .setName('voice')
+                    .setDescription('Whether or not you want it to be played in voice chat. On by default.')
+            )
+            .setIntegrationTypes([1])
+            .setContexts([1, 2]),
         serverIcon = new Discord.SlashCommandBuilder()
             .setName('servericon')
             .setDescription('Gets the icon of the server and sends it!'),
         versionCom = new Discord.SlashCommandBuilder()
             .setName('version')
-            .setDescription('Sends the current version of the bot.'),
+            .setDescription('Sends the current version of the bot.')
+            .setIntegrationTypes([0, 1])
+            .setContexts([0, 1, 2]),
         joinCom = new Discord.SlashCommandBuilder()
             .setName('join')
             .setDescription('Joins your discord voice channel! Must be in one already to work.'),
@@ -87,7 +110,9 @@ client.once('ready', () => {
                 option
                     .setName('user')
                     .setDescription('If you want to get someone else\'s pfp, put the user in here! By default, it\'ll be your pfp.')
-            ),
+            )
+            .setIntegrationTypes([0, 1])
+            .setContexts([0, 1, 2]),
         caption1 = new Discord.SlashCommandBuilder()
             .setName('caption1')
             .setDescription('Adds a caption in style one to your profile picture, or an image you attach. Bottom text optional.')
@@ -102,16 +127,18 @@ client.once('ready', () => {
                     .setName('textbottom')
                     .setDescription('The bottom text for your outputted image!')
             )
+            .addUserOption(option =>
+                option
+                    .setName('user')
+                    .setDescription('If you want to use someone\'s pfp as the base image, put the user in here!')
+            )
             .addAttachmentOption(option =>
                 option
                     .setName('image')
                     .setDescription('If you want to make it output a specific image instead of your pfp!')
             )
-            .addUserOption(option =>
-                option
-                    .setName('user')
-                    .setDescription('If you want to use someone\'s pfp as the base image, put the user in here!')
-            ),
+            .setIntegrationTypes([0, 1])
+            .setContexts([0, 1, 2])
     ];
     commands.forEach(command => {
         client.application.commands.create(command);
@@ -124,18 +151,24 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
     let self;
     try { self = interaction.guild.members.cache.get("771195366645039115"); } catch {};
 
-    function reply(messageReply, isReply = true, filesAttached = []) {
-        //messageReply is the content of the message
+    /**
+     * Helper function for replying to /say command.
+     * @param {String} messageReply - Content of the message
+     * @param {Boolean} keepAuthor - Default true, it replies to the command, if false, sends new message
+     * @param {*} filesAttached - Requires you to use [] around the parameter
+     */
+    async function reply(messageReply, keepAuthor = true, filesAttached = []) {
         //isReply is true, it replies to the command, if false, sends new message
         //filesAttached requires you to use [] around the parameter
-        if(isReply){
-            interaction.reply({content: messageReply, files: filesAttached});
+        if(keepAuthor || !interaction.guildId){
+            await interaction.deferReply();
+            await interaction.editReply({content: messageReply, files: filesAttached});
         } else {
             try{
-                interaction.deferReply();
-                interaction.deleteReply();
-            } catch {}
-            if(interaction.guild === null) interaction.user.send({content: messageReply, files: filesAttached}); else interaction.channel.send({content: messageReply, files: filesAttached});
+                await interaction.deferReply();
+            } catch (e) {
+                console.error("Error sending response in context:", e);
+            }
         }
     }
 
@@ -161,14 +194,14 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
             break;
         case "say":
             let author = false;
-            if(interaction.options.getBoolean('keepauthor') == true) author = true; else author = false;
+            if(interaction.options.getBoolean('keepauthor') == true) author = true;
 
             if(!author) reply(interaction.options.getString('message'), false); else reply(interaction.options.getString('message'));
             
             let playInVc = true;
-            if(interaction.options.getBoolean('voice') == false) playInVc = false; else playInVc = true;
+            if(!interaction.member?.voice || !interaction.options.getBoolean('voice')) playInVc = false;
 
-            if(playInVc){ try { if(interaction.member.voice.channel.id == self.voice.channel.id){
+            if(playInVc){ try { if(interaction.member.voice.channel.id == self?.voice?.channel?.id){
                 if(interaction.options.getString('message').length < 1500){
                     if (!fileService.existsSync('./cache')){
                         fileService.mkdirSync('./cache');
@@ -239,26 +272,28 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
             let image;
             const output = canvas.createCanvas(512, 512);
             const context = output.getContext('2d');
-            if(interaction.options.getAttachment('image') == null && interaction.options.getUser('user') != null){
-                image = await canvas.loadImage(interaction.options.getUser('user').displayAvatarURL({ extension: 'png' }));
-                context.drawImage(image, 0, 0, output.width, output.height);
-            } else if(interaction.options.getAttachment('image') != null && interaction.options.getUser('user') == null){
-                const width = interaction.options.getAttachment('image').width;
-                output.width = width; output.height = interaction.options.getAttachment('image').height;
 
-                let attachment = interaction.options.getAttachment('image').url.split('?')[0];
+            const targetAttachment = interaction.options.getAttachment('image');
+
+            if(!targetAttachment && interaction.options.getUser('user') != null){
+                image = await canvas.loadImage(interaction.options.getUser('user').displayAvatarURL({ extension: 'png', size: 512 }));
+                context.drawImage(image, 0, 0, output.width, output.height);
+            } else if(targetAttachment && interaction.options.getUser('user') == null){
+                output.width = targetAttachment.width || 512; output.height = targetAttachment.height || 512;
+
+                const attachment = targetAttachment.url.split('?')[0];
                 if(attachment.endsWith(".png") || attachment.endsWith(".jpg") || attachment.endsWith(".gif") || attachment.endsWith(".webp")){
-                    image = await canvas.loadImage(interaction.options.getAttachment('image').url);
+                    image = await canvas.loadImage(targetAttachment.url);
                 }
             } else {
-                image = await canvas.loadImage(interaction.user.displayAvatarURL({ extension: 'png' }));
-                context.drawImage(image, 0, 0, output.width, output.height);
+                image = await canvas.loadImage(interaction.user.displayAvatarURL({ extension: 'png', size: 512 }));
+                await context.drawImage(image, 0, 0, output.width, output.height);
             }
-            context.drawImage(image, 0, 0, output.width, output.height);
+            await context.drawImage(image, 0, 0, output.width, output.height);
             
             //text size equation: ((strlength / width) * (3/2)) + x
             //const sizeTop = (((interaction.options.getString('texttop').length / output.width) * (800)) + 10);
-            context.font = `80px "Impact"`;
+            context.font = '80px Impact, sans-serif';
             context.fillStyle = '#ffffff';
             context.textBaseline = 'top';
 
@@ -287,14 +322,14 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 
             if(interaction.options.getString('textbottom') != null){
                 const sizeBottom = (((interaction.options.getString('textbottom').length * output.width) * (3)) + 12);
-                context.font = `80px "Impact"`;
+                context.font = '80px Impact, sans-serif';
                 context.textBaseline = 'bottom';
                 context.textAlign = 'center';
                 context.fillText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
                 context.strokeText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
             }
             const outimage = new Discord.AttachmentBuilder(output.toBuffer(), 'captionone.jpg');
-            try{await interaction.editReply({content: "*Feature is in beta!", files: [outimage]});} catch {await interaction.editReply("Something went wrong :(");}
+            try{await interaction.editReply({content: "(Feature is in beta!)", files: [outimage]});} catch {await interaction.editReply("Something went wrong :(");}
             //reply("*Feature is in beta!", true, [outimage]);
             break;
     }
@@ -307,8 +342,12 @@ client.on("messageCreate", message =>{
     const args = message.content.slice(prefix.length).split(/ +/), cmd = args.shift().toLowerCase();
     const self = message.guild.members.cache.get("771195366645039115");
 
+    /**
+     * Send a message in chat.
+     * @param {String} messageReply - Message to reply with
+     * @param {Boolean} isReply - Default true, it replies to the command, if false, sends new message 
+     */
     function send(messageReply, isReply = true) {
-        //isReply is true, it replies to the command, if false, sends new message
         if(isReply){
             message.reply(messageReply);
         } else {
@@ -329,7 +368,7 @@ client.on("messageCreate", message =>{
     }
 
     if(cmd === 'fart'){
-        reply = parseInt(message.content.split(" ").slice(1).join(" "));
+        let reply = parseInt(message.content.split(" ").slice(1).join(" "));
         if(reply.toString() == '1'){
             send("HAHAHBUHAIFIHAUIFHUAHAHAHAHHAHAHAHAHHAHAHAHHAA", false);
         } else {
@@ -339,4 +378,4 @@ client.on("messageCreate", message =>{
     }
 });
 
-client.login(token);
+client.login(process.env.DT);

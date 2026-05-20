@@ -1,6 +1,6 @@
 {
   "name": "idiotbot",
-  "version": "13.2.1",
+  "version": "13.3.0",
   "description": "it's idiot bot, gaming balling and balling gamer.",
   "main": "main.js",
   "scripts": {
@@ -12,7 +12,9 @@
     "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.19.2",
     "@napi-rs/canvas": "^0.1.0",
+    "canvas": "^3.2.3",
     "discord.js": "^14.16.1",
+    "dotenv": "^17.4.2",
     "ffmpeg": "^0.0.4",
     "latest-version": "^9.0.0",
     "libsodium-wrappers": "^0.7.13",
