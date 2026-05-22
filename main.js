@@ -138,12 +138,44 @@ client.once(Discord.Events.ClientReady, c => {
                     .setDescription('If you want to make it output a specific image instead of your pfp!')
             )
             .setIntegrationTypes([0, 1])
+            .setContexts([0, 1, 2]),
+        caption2 = new Discord.SlashCommandBuilder()
+            .setName('caption2')
+            .setDescription('Adds a caption in style two to your profile picture, or an image you attach. Bottom text optional.')
+            .addStringOption(option =>
+                option
+                    .setName('texttop')
+                    .setDescription('The top text for your outputted image!')
+                    .setRequired(true)
+            )
+            .addStringOption(option =>
+                option
+                    .setName('textbottom')
+                    .setDescription('The bottom text for your outputted image!')
+            )
+            .addUserOption(option =>
+                option
+                    .setName('user')
+                    .setDescription('If you want to use someone\'s pfp as the base image, put the user in here!')
+            )
+            .addAttachmentOption(option =>
+                option
+                    .setName('image')
+                    .setDescription('If you want to make it output a specific image instead of your pfp!')
+            )
+            .setIntegrationTypes([0, 1])
             .setContexts([0, 1, 2])
     ];
     commands.forEach(command => {
         client.application.commands.create(command);
     });
 });
+
+let image;
+let output;
+let context;
+let targetAttachment;
+let outimage;
 
 client.on(Discord.Events.InteractionCreate, async interaction => {
     if(!interaction.isChatInputCommand()) return;
@@ -269,11 +301,11 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
         case "caption1":
             await interaction.deferReply();
             canvas.registerFont('./fonts/impact.ttf', { family: 'Impact'});
-            let image;
-            const output = canvas.createCanvas(512, 512);
-            const context = output.getContext('2d');
+            image;
+            output = canvas.createCanvas(512, 512);
+            context = output.getContext('2d');
 
-            const targetAttachment = interaction.options.getAttachment('image');
+            targetAttachment = interaction.options.getAttachment('image');
 
             if(!targetAttachment && interaction.options.getUser('user') != null){
                 image = await canvas.loadImage(interaction.options.getUser('user').displayAvatarURL({ extension: 'png', size: 512 }));
@@ -322,14 +354,60 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 
             if(interaction.options.getString('textbottom') != null){
                 const sizeBottom = (((interaction.options.getString('textbottom').length * output.width) * (3)) + 12);
-                context.font = '80px Impact, sans-serif';
+                // context.font = '80px Impact, sans-serif';
                 context.textBaseline = 'bottom';
-                context.textAlign = 'center';
+                // context.textAlign = 'center';
                 context.fillText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
                 context.strokeText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
             }
-            const outimage = new Discord.AttachmentBuilder(output.toBuffer(), 'captionone.jpg');
+            outimage = new Discord.AttachmentBuilder(output.toBuffer(), 'captionone.jpg');
             try{await interaction.editReply({content: "(Feature is in beta!)", files: [outimage]});} catch {await interaction.editReply("Something went wrong :(");}
+            //reply("*Feature is in beta!", true, [outimage]);
+            break;
+        case "caption2":
+            await interaction.deferReply();
+            canvas.registerFont('./fonts/impact.ttf', { family: 'Impact'});
+            image = undefined;
+            output = canvas.createCanvas(710, 510);
+            context = output.getContext('2d');
+
+            targetAttachment = interaction.options.getAttachment('image');
+            
+            const background = await canvas.loadImage('./blackspace.jpg');
+            context.drawImage(background, 0, 0, output.width, output.height);
+
+            if(!targetAttachment && interaction.options.getUser('user') != null){
+                image = await canvas.loadImage(interaction.options.getUser('user').displayAvatarURL({ extension: 'png', size: 512 }));
+                context.drawImage(image, 0, 0, output.width, output.height);
+            } else if(targetAttachment && interaction.options.getUser('user') == null){
+                output.width = targetAttachment.width || 512; output.height = targetAttachment.height || 512;
+                attachment = targetAttachment.url.split('?')[0];
+                if(attachment.endsWith(".png") || attachment.endsWith(".jpg") || attachment.endsWith(".gif") || attachment.endsWith(".webp")){
+                    image = await canvas.loadImage(targetAttachment.url);
+                }
+            } else {
+                image = await canvas.loadImage(interaction.user.displayAvatarURL({ extension: 'png', size: 512 }));
+                // await context.drawImage(image, 0, 0, output.width, output.height);
+            }
+            await context.drawImage(image, 100, 45, 500, 300);
+            
+            //const sizeTop = (((interaction.options.getString('texttop').length / output.width) * (800)) + 10);
+            context.strokeStyle = '#ffffff';
+            await context.strokeRect(85, 30, 530, 330);
+
+            context.font = '55px "Times New Roman"';
+            context.textAlign = 'center';
+            context.fillStyle = '#ffffff';
+
+            await context.fillText(interaction.options.getString('texttop'), output.width / 2, output.height / 1.2);
+
+            if(interaction.options.getString('textbottom') != null){
+                context.font = '30px "Times New Roman"';
+                await context.fillText(interaction.options.getString('textbottom'), output.width / 2, output.height / 1.05);
+            }
+            outimage = new Discord.AttachmentBuilder(output.toBuffer(), 'captiontwo.jpg');
+            try { await interaction.editReply({content: "(Feature is in beta!)", files: [outimage]});}
+            catch { await interaction.editReply("Something went wrong :(");}
             //reply("*Feature is in beta!", true, [outimage]);
             break;
     }
