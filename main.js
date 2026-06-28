@@ -293,9 +293,9 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
             break;
         case "pfp":
             if(interaction.options.getUser('user') == null){
-                reply("No problem, here's your profile picture!", true, [interaction.user.avatarURL()]);
+                reply("No problem, here's your profile picture!", true, [interaction.user.displayAvatarURL({extension: 'png',  size: 1024 })]);
             } else {
-                reply(`Sure, here's <@${interaction.options.getUser('user').id}>'s avatar!`, true, [interaction.options.getUser('user').avatarURL()]);
+                reply(`Sure, here's <@${interaction.options.getUser('user').id}>'s avatar!`, true, [interaction.options.getUser('user').displayAvatarURL({extension: 'png',  size: 1024 })]);
             }
             break;
         case "caption1":
@@ -378,7 +378,6 @@ client.on(Discord.Events.InteractionCreate, async interaction => {
 
             if(!targetAttachment && interaction.options.getUser('user') != null){
                 image = await canvas.loadImage(interaction.options.getUser('user').displayAvatarURL({ extension: 'png', size: 512 }));
-                context.drawImage(image, 0, 0, output.width, output.height);
             } else if(targetAttachment && interaction.options.getUser('user') == null){
                 output.width = targetAttachment.width || 512; output.height = targetAttachment.height || 512;
                 attachment = targetAttachment.url.split('?')[0];
